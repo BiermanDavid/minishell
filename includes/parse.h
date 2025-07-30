@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 16:32:55 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:39:07 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
  * Token creation and basic lexical analysis functions.
  */
 t_token		*create_token(t_token_type type, const char *value, int position);
-t_token		**tokenize_input(const char *input, int *token_count);
+t_token		**tokenize_input(const char *input, int *j);
 void		destroy_token(t_token *token);
 
 /**
  * parse.c - parsing
  */
-t_cmd_list	*parse_command(t_token **tokens, int token_count);
+t_cmd_list	*parse_command(t_token **token, int j);
 
 /**
  * parser_cmd.c - Command parsing and command list creation functions.
@@ -32,7 +32,7 @@ t_cmd_list	*parse_command(t_token **tokens, int token_count);
 void		add_cmd_to_list(t_cmd_list *list, t_cmd_node *node);
 char		**allocate_args_array(int word_count);
 char		*process_token_arg(t_token *token);
-char		**extract_command_args(t_token **tokens, int start, int word_count);
+char		**extract_command_args(t_token **token, int start, int word_count);
 
 /**
  * Variable expansion and quote processing for shell input.
@@ -56,16 +56,16 @@ t_cmd_list	*create_cmd_list(void);
  * redirects.c - edge cases for handling redirections < >
  */
 int			get_redir_type(t_token_type token_type);
-int			handle_heredoc_redir(t_token **tokens, int i, int token_count, t_cmd_node *cmd);
-int			handle_standard_redir(t_token **tokens, int i, int token_count, t_cmd_node *cmd);
-int			parse_redirections(t_token **tokens, int start, int token_count, t_cmd_node *cmd);
+int			heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd);
+int			standard_redir(t_token **token, int i, int j, t_cmd_node *cmd);
+int			parse_redir(t_token **token, int start, int j, t_cmd_node *cmd);
 
 /**
  * heredoc.c - edge cases for handling heredocs << >>
  */
 char		*collect_heredoc_content(const char *delimiter);
 char		*read_heredoc_line(char *buffer, size_t buffer_size);
-char		*append_heredoc_line(char *content, char *line, size_t *content_len, size_t *content_size);
+char		*append_heredoc(char *data, char *line, size_t *len, size_t *size);
 
 /**
  * free_errors.c

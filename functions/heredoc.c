@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:47:44 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:54:56 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:40:44 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Reads one line of heredoc input.
  * Returns processed line without trailing newline.
  */
-char	*read_heredoc_line(char *buffer, size_t buffer_size)
+char	*read_heredoc(char *buffer, size_t buffer_size)
 {
 	char	*line;
 	size_t	line_len;
@@ -36,58 +36,56 @@ char	*read_heredoc_line(char *buffer, size_t buffer_size)
 }
 
 /**
- * Appends a line to heredoc content buffer.
+ * Appends a line to heredoc data buffer.
  * Handles buffer reallocation if needed.
  */
-char	*append_heredoc_line(char *content, char *line, size_t *content_len,
-	size_t *content_size)
+char	*append_heredoc(char *data, char *line, size_t *len, size_t *size)
 {
 	size_t	line_len;
 
 	line_len = strlen(line);
 	line[line_len] = '\n';
 	line_len++;
-	if (*content_len + line_len + 1 > *content_size)
+	if (*len + line_len + 1 > *size)
 	{
-		*content_size *= 2;
-		content = realloc(content, *content_size);
-		if (!content)
+		*size *= 2;
+		data = realloc(data, *size);
+		if (!data)
 			return (NULL);
 	}
-	strcpy(content + *content_len, line);
-	*content_len += line_len;
-	return (content);
+	strcpy(data + *len, line);
+	*len += line_len;
+	return (data);
 }
 
 /**
-* Collects heredoc content from input until delimiter is found.
-* Returns the collected content as a single string.
+* Collects heredoc data from input until delimiter is found.
+* Returns the collected data as a single string.
 */
 char	*collect_heredoc_content(const char *delimiter)
 {
-	char	*content;
+	char	*data;
 	char	*line;
-	size_t	content_size;
-	size_t	content_len;
+	size_t	size;
+	size_t	len;
 	char	buffer[1024];
 
-	content_size = 1024;
-	content = malloc(content_size);
-	if (!content)
+	size = 1024;
+	data = malloc(size);
+	if (!data)
 		return (NULL);
-	content[0] = '\0';
-	content_len = 0;
+	data[0] = '\0';
+	len = 0;
 	while (1)
 	{
-		line = read_heredoc_line(buffer, sizeof(buffer));
+		line = read_heredoc(buffer, sizeof(buffer));
 		if (!line)
 			break ;
 		if (strcmp(line, delimiter) == 0)
 			break ;
-		content = append_heredoc_line(content, line, &content_len,
-				&content_size);
-		if (!content)
+		data = append_heredoc(data, line, &len, &size);
+		if (!data)
 			return (NULL);
 	}
-	return (content);
+	return (data);
 }

@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:50:15 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:51:55 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:33:14 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,16 @@ int	get_redir_type(t_token_type token_type)
  * Handles heredoc redirection parsing.
  * Collects heredoc content and creates file node.
  */
-int	handle_heredoc_redir(t_token **tokens, int i, int token_count,
-		t_cmd_node *cmd)
+int	heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd)
 {
 	t_file_node	*file_node;
 	char		*heredoc_content;
 	char		*content_to_use;
 
 	i++;
-	if (i >= token_count || tokens[i]->type != TOKEN_WORD)
+	if (i >= j || token[i]->type != TOKEN_WORD)
 		return (i);
-	heredoc_content = collect_heredoc_content(tokens[i]->value);
+	heredoc_content = collect_heredoc_content(token[i]->value);
 	if (heredoc_content)
 		content_to_use = heredoc_content;
 	else
@@ -60,17 +59,16 @@ int	handle_heredoc_redir(t_token **tokens, int i, int token_count,
  * Handles standard redirection parsing.
  * Creates file node for input, output, or append redirections.
  */
-int	handle_standard_redir(t_token **tokens, int i, int token_count,
-		t_cmd_node *cmd)
+int	standard_redir(t_token **token, int i, int j, t_cmd_node *cmd)
 {
 	int			redir_type;
 	t_file_node	*file_node;
 
-	redir_type = get_redir_type(tokens[i]->type);
+	redir_type = get_redir_type(token[i]->type);
 	i++;
-	if (i >= token_count || tokens[i]->type != TOKEN_WORD)
+	if (i >= j || token[i]->type != TOKEN_WORD)
 		return (i);
-	file_node = create_file_node(tokens[i]->value, redir_type);
+	file_node = create_file_node(token[i]->value, redir_type);
 	if (file_node)
 		add_file_to_list(cmd->files, file_node);
 	return (i + 1);
@@ -80,20 +78,19 @@ int	handle_standard_redir(t_token **tokens, int i, int token_count,
  * Enhanced redirection parser that handles heredoc content.
  * Collects heredoc content when << operator is encountered.
  */
-int	parse_redirections(t_token **tokens, int start, int token_count,
-		t_cmd_node *cmd)
+int	parse_redir(t_token **token, int start, int j, t_cmd_node *cmd)
 {
 	int	i;
 
 	i = start;
-	while (i < token_count)
+	while (i < j)
 	{
-		if (tokens[i]->type == TOKEN_HEREDOC)
-			i = handle_heredoc_redir(tokens, i, token_count, cmd);
-		else if (tokens[i]->type == TOKEN_REDIRECT_IN
-			|| tokens[i]->type == TOKEN_REDIRECT_OUT
-			|| tokens[i]->type == TOKEN_REDIRECT_APPEND)
-			i = handle_standard_redir(tokens, i, token_count, cmd);
+		if (token[i]->type == TOKEN_HEREDOC)
+			i = heredoc_redir(token, i, j, cmd);
+		else if (token[i]->type == TOKEN_REDIRECT_IN
+			|| token[i]->type == TOKEN_REDIRECT_OUT
+			|| token[i]->type == TOKEN_REDIRECT_APPEND)
+			i = standard_redir(token, i, j, cmd);
 		else
 			break ;
 	}

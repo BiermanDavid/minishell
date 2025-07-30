@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 16:33:10 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:33:39 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	process_single_command(t_token **tokens, int i, int token_count,
 		return (token_count);
 	current_cmd->cmd = extract_command_args(tokens, i, word_count);
 	i += word_count;
-	i = parse_redirections(tokens, i, token_count, current_cmd);
+	i = parse_redir(tokens, i, token_count, current_cmd);
 	set_command_type(current_cmd, tokens, i, token_count);
 	add_cmd_to_list(cmd_list, current_cmd);
 	if (i < token_count && (tokens[i]->type == TOKEN_PIPE
