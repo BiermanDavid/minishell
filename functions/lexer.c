@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:35 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 18:48:02 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:51:46 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,17 +59,17 @@ int	process_single_token(const char *input, int pos, t_token **tokens,
 {
 	if (is_multi_char_op(input, pos))
 	{
-		pos = handle_multi_char_ops(input, pos, tokens, *count);
+		pos = multi_char(input, pos, tokens, *count);
 		(*count)++;
 	}
 	else if (is_single_char_op(input[pos]))
 	{
-		pos = handle_single_char_ops(input, pos, tokens, *count);
+		pos = single_char(input, pos, tokens, *count);
 		(*count)++;
 	}
 	else
 	{
-		pos = process_word_token(input, pos, tokens, *count);
+		pos = word_token(input, pos, tokens, *count);
 		(*count)++;
 	}
 	return (pos);
