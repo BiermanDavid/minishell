@@ -34,9 +34,7 @@ void	search_command(t_cmd_node *cmd_node);
  * pipex.c
  * Executes piped external commands like ls | grep.
  */
-void	run_piped_commands(t_cmd_list *cmd_list, char **envp);
-char	*find_cmd(char *cmd, char **envp);
-void	free_split(char **arr);
+void    run_piped_commands(t_cmd_list *cmd_list, char **envp);
 
 #endif
 
