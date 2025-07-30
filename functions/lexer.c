@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/30 15:41:35 by dabierma          #+#    #+#             */
+/*   Updated: 2025/07/30 16:35:58 by dabierma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parse.h"
 
 /**
@@ -248,7 +260,7 @@ t_token	**tokenize_input(const char *input, int *token_count)
 
 	if (!input || !token_count)
 		return (NULL);
-	tokens = malloc(64 * sizeof(t_token*));
+	tokens = malloc(64 * sizeof(t_token *));
 	if (!tokens)
 		return (NULL);
 	pos = 0;

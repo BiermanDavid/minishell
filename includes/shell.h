@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
+/*   Updated: 2025/07/30 16:33:59 by dabierma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SHELL_H
 # define SHELL_H
 # include <stdio.h>
@@ -6,7 +18,7 @@
 # include <stdbool.h>
 # include <sys/types.h>
 # include <unistd.h>
-# include "parse.h"
+# include <ctype.h>
 
 typedef struct s_file_node	t_file_node;
 typedef struct s_cmd_node	t_cmd_node;
@@ -97,19 +109,25 @@ typedef struct s_cmd_list
  * Shell loop and user interface functions for input handling.
  */
 void	display_prompt(void);
-char	*read_input(void);
 void	strip_newline(char *input);
-bool	is_empty_line(const char *input);
 void	cleanup_tokens(t_token **tokens, int token_count);
 void	run_shell_loop(void);
 
 /**
- * Signal handling functions for parent and child processes.
+ * Signal.c - Signal handling functions for readline.
  */
 void	setup_parent_signals(void);
 void	setup_child_signals(void);
 void	prepare_readline_signals(void);
 void	handle_sigint_parent(int sig);
 void	handle_sigquit_parent(int sig);
+
+/**
+ * handle_inputs.c - manages response for input edge cases
+ */
+char	*read_input(void);
+bool	is_empty_line(const char *input);
+bool	handle_exit_command(char *input);
+void	process_input(char *input);
 
 #endif

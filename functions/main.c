@@ -1,21 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
+/*   Updated: 2025/07/30 15:37:12 by dabierma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parse.h"
 #include "execute.h"
 #include <readline/readline.h>
 #include <readline/history.h>
-
-/**
- * Reads a line of input from the user.
- * Uses readline for enhanced input with history support.
- */
-char	*read_input(void)
-{
-	char	*input;
-
-	input = readline("minishell> ");
-	if (input && *input)
-		add_history(input);
-	return (input);
-}
 
 /**
  * Removes the newline character from input string.
@@ -28,26 +26,6 @@ void	strip_newline(char *input)
 	len = strlen(input);
 	if (len > 0 && input[len - 1] == '\n')
 		input[len - 1] = '\0';
-}
-
-/**
- * Checks if the input line is empty or only whitespace.
- * Returns true if line should be ignored.
- */
-bool	is_empty_line(const char *input)
-{
-	int	i;
-
-	if (!input)
-		return (true);
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] != ' ' && input[i] != '\t')
-			return (false);
-		i++;
-	}
-	return (true);
 }
 
 /**
@@ -70,54 +48,7 @@ void	cleanup_tokens(t_token **tokens, int token_count)
 }
 
 /**
- * Handles exit command processing.
- * Returns true if shell should exit.
- */
-bool	handle_exit_command(char *input)
-{
-	if (strcmp(input, "exit") == 0)
-	{
-		free(input);
-		printf("Goodbye!\n");
-		return (true);
-	}
-	return (false);
-}
-
-/**
- * Processes parsed command list.
- * Handles execution without debug output.
- */
-void	process_command_list(t_cmd_list *cmd_list)
-{
-	if (cmd_list && cmd_list->size > 0)
-	{
-		execution_manager(cmd_list);
-		free_cmd_list(cmd_list);
-	}
-}
-
-/**
- * Processes user input through tokenization and parsing.
- * Handles the complete input processing pipeline.
- */
-void	process_input(char *input)
-{
-	t_token		**tokens;
-	int			token_count;
-	t_cmd_list	*cmd_list;
-
-	tokens = tokenize_input(input, &token_count);
-	if (tokens && token_count > 0)
-	{
-		cmd_list = parse_command(tokens, token_count);
-		process_command_list(cmd_list);
-		cleanup_tokens(tokens, token_count);
-	}
-}
-
-/**
- * Initializes shell environment.
+ * Initializes shell environment (signal.c)
  * Sets up signals and displays welcome message.
  */
 void	initialize_shell(void)
@@ -131,7 +62,7 @@ void	initialize_shell(void)
  * Main shell loop that handles the read-eval-print cycle.
  * Continues until user exits or EOF is encountered.
  */
-void	run_shell_loop(void)
+int	main(void)
 {
 	char	*input;
 
@@ -141,7 +72,7 @@ void	run_shell_loop(void)
 		input = read_input();
 		if (!input)
 		{
-			printf("\nGoodbye!\n");
+			printf("Goodbye!\n");
 			break ;
 		}
 		if (is_empty_line(input))
@@ -154,17 +85,5 @@ void	run_shell_loop(void)
 		process_input(input);
 		free(input);
 	}
-}
-
-/**
- * Program entry point.
- * Initializes the shell and starts the main loop.
- */
-int	main(int argc, char *argv[])
-{
-	(void)argc;
-	(void)argv;
-
-	run_shell_loop();
 	return (0);
 }
