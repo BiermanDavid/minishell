@@ -1,0 +1,106 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_word.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/30 18:39:19 by dabierma          #+#    #+#             */
+/*   Updated: 2025/07/30 18:47:10 by dabierma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "parse.h"
+/**
+ * Checks if character should break word reading.
+ * Returns true for delimiters and operators.
+ */
+bool	is_word_delimiter(char c)
+{
+	return (c == ' ' || c == '\t' || c == '|' || c == '&'
+		|| c == '>' || c == '<' || c == ';');
+}
+
+/**
+ * Handles quote processing in word reading.
+ * Updates position and quote state.
+ * q is quotes
+ */
+void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
+{
+	if (!*in_q)
+	{
+		if (input[*pos] == '"' || input[*pos] == '\'')
+		{
+			*q_char = input[*pos];
+			*in_q = true;
+		}
+	}
+	else
+	{
+		if (input[*pos] == *q_char)
+		{
+			*in_q = false;
+			*q_char = '\0';
+		}
+	}
+}
+
+/**
+ * Calculates word length with quote handling.
+ * Returns the length of the word token.
+ */
+int	calculate_word_length(const char *input, int *pos)
+{
+	int		start;
+	bool	in_q;
+	char	q_char;
+
+	start = *pos;
+	in_q = false;
+	q_char = '\0';
+	while (input[*pos])
+	{
+		handle_quote(input, pos, &in_q, &q_char);
+		if (!in_q && is_word_delimiter(input[*pos]))
+			break ;
+		(*pos)++;
+	}
+	return (*pos - start);
+}
+
+/**
+ * Copies word from input to allocated buffer.
+ * Helper function for read_word.
+ */
+void	copy_word(char *word, const char *input, int start, int len)
+{
+	int	i;
+
+	i = 0;
+	while (i < len)
+	{
+		word[i] = input[start + i];
+		i++;
+	}
+	word[len] = '\0';
+}
+
+/**
+ * Reads a word token from input with proper quote handling.
+ * Handles single quotes, double quotes, and bare words correctly.
+ */
+char	*read_word(const char *input, int *pos)
+{
+	int		start;
+	int		len;
+	char	*word;
+
+	start = *pos;
+	len = calculate_word_length(input, pos);
+	word = malloc(len + 1);
+	if (!word)
+		return (NULL);
+	copy_word(word, input, start, len);
+	return (word);
+}

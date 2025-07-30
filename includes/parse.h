@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 17:39:07 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:47:26 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,28 @@ t_cmd_node	*create_cmd_node(int cmd_type);
 t_cmd_list	*create_cmd_list(void);
 
 /**
+ * Lexer.c
+ */
+
+/**
+ * lexer_word.c
+ */
+bool		is_word_delimiter(char c);
+void		handle_quote(const char *input, int *pos, bool *in_q, char *q_char);
+int			calculate_word_length(const char *input, int *pos);
+void		copy_word(char *word, const char *input, int start, int len);
+char		*read_word(const char *input, int *pos);
+
+/**
+ * Lexer_utils.c
+ */
+int			multi_char(const char *input, int pos, t_token **tokens, int i);
+int			single_char(const char *input, int pos, t_token **tokens, int i);
+int			word_token(const char *input, int pos, t_token **tokens, int i);
+bool		is_multi_char_op(const char *input, int pos);
+bool		is_single_char_op(char c);
+
+/**
  * redirects.c - edge cases for handling redirections < >
  */
 int			get_redir_type(t_token_type token_type);
@@ -73,5 +95,13 @@ char		*append_heredoc(char *data, char *line, size_t *len, size_t *size);
 void		free_file_list(t_file_list *list);
 void		free_cmd_args(char **cmd);
 void		free_cmd_list(t_cmd_list *list);
+
+/**
+ * expansion_quotes.c
+ */
+int			copy_var_value(char *result, int result_pos, const char *var_value);
+void		remove_quotes(char *result, const char *input, int len);
+char		*process_single_quotes(const char *input);
+char		*process_double_quotes(const char *input);
 
 #endif
