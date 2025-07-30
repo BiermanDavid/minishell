@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 19:53:54 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:45:35 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,64 @@ int		execution_manager(t_cmd_list *cmd_list);
 void	print_parsed_commands(t_cmd_list *cmd_list);
 
 /**
- * buildins.c
+ * builtins.c
  * Rebuildes the builtin-commands and searches 
  * for the correct commmand
  */
-void	our_echo(t_cmd_node *cmd_node);
-void	our_cd(t_cmd_node *cmd_node);
-void	search_command(t_cmd_node *cmd_node);
+int		builtin_echo(char **args);
+int		builtin_pwd(void);
+int 	builtin_cd(char **args);
+int 	builtin_env(void);
+int 	builtin_exit(char **args);
+int 	builtin_export(char **args);
+int 	builtin_unset(char **args);
+int 	is_builtin(const char *cmd);
+int		exec_builtin(t_cmd_node *node);
 
 /**
- * pipex.c
+ * execute.c
  * Executes piped external commands like ls | grep.
  */
-void    run_piped_commands(t_cmd_list *cmd_list, char **envp);
+int execution_manager(t_cmd_list *cmd_list);
+
+/**
+ * Gibt die geparsten Befehle formatiert im Terminal aus (für Debugging).
+ */
+void print_parsed_commands(t_cmd_list *cmd_list);
+
+/* ========================================================================= */
+/*                          Redirection Utilities                            */
+/* ========================================================================= */
+
+int redir_in(t_file_node *f);
+int redir_out(t_file_node *f);
+int redir_append(t_file_node *f);
+int redir_heredoc(t_file_node *f);
+int apply_redirections(t_file_list *files);
+
+/* ========================================================================= */
+/*                          Process Execution                                */
+/* ========================================================================= */
+
+int exec_external(t_cmd_node *node);
+int exec_builtin_redir(t_cmd_node *node);
+int execute_single(t_cmd_node *node);
+
+/* ========================================================================= */
+/*                          Pipeline Execution                               */
+/* ========================================================================= */
+
+pid_t spawn_stage(t_cmd_node *node, int in_fd, int out_fd);
+t_cmd_node *exec_pipeline(t_cmd_node *start);
+
+/* ========================================================================= */
+/*                             Debug Utilities                               */
+/* ========================================================================= */
+
+void print_command(t_cmd_node *cmd, int index);
+void print_args(char **args);
+void print_cmd_type(t_cmd_node *cmd);
+void print_files(t_file_node *file);
 
 #endif
 

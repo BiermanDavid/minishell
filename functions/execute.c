@@ -6,220 +6,100 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/07/30 20:24:11 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/07/30 21:46:08 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-#include "shell.h"
+#include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <sys/wait.h>
 
-/* ========================================================================== */
-/*                          Internal builtin helpers                          */
-/* ========================================================================== */
+/* ========================================================================= */
+/*                           Redirection Utilities                           */
+/* ========================================================================= */
 
-static int builtin_echo(char **args)
+int redir_in(t_file_node *f)
 {
-    int i;
-    int newline;
-
-    newline = 1;
-    i = 1;
-    if (args[1] && strcmp(args[1], "-n") == 0)
+    int fd = open(f->filename, O_RDONLY);
+    if (fd < 0)
     {
-        newline = 0;
-        i = 2;
+        perror(f->filename);
+        return (-1);
     }
-    while (args[i])
+    dup2(fd, STDIN_FILENO);
+    close(fd);
+    return (0);
+}
+
+int redir_out(t_file_node *f)
+{
+    int fd = open(f->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (fd < 0)
     {
-        printf("%s", args[i]);
-        if (args[i + 1])
-            printf(" ");
-        i++;
+        perror(f->filename);
+        return (-1);
     }
-    if (newline)
-        printf("\n");
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
     return (0);
 }
 
-static int builtin_pwd(void)
+int redir_append(t_file_node *f)
 {
-    char cwd[1024];
-
-    if (getcwd(cwd, sizeof(cwd)))
-        printf("%s\n", cwd);
-    return (0);
-}
-
-static int builtin_cd(char **args)
-{
-    const char *path;
-
-    path = args[1];
-    if (!path)
-        path = getenv("HOME");
-    if (!path || chdir(path) != 0)
+    int fd = open(f->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (fd < 0)
     {
-        perror("cd");
-        return (1);
+        perror(f->filename);
+        return (-1);
     }
+    dup2(fd, STDOUT_FILENO);
+    close(fd);
     return (0);
 }
 
-extern char **environ;
-
-static int builtin_env(void)
+int redir_heredoc(t_file_node *f)
 {
-    char **env;
+    int pfd[2];
 
-    env = environ;
-    while (env && *env)
-    {
-        printf("%s\n", *env);
-        env++;
-    }
+    if (pipe(pfd) == -1)
+        return (-1);
+    write(pfd[1], f->filename, strlen(f->filename));
+    close(pfd[1]);
+    dup2(pfd[0], STDIN_FILENO);
+    close(pfd[0]);
     return (0);
 }
 
-static int builtin_exit(char **args)
+int apply_redirections(t_file_list *files)
 {
-    (void)args;
-    exit(0);
-    return (0);
-}
-
-static int builtin_export(char **args)
-{
-    int     i;
-    char    *eq;
-
-    if (!args[1])
-        return (builtin_env());
-    i = 1;
-    while (args[i])
-    {
-        eq = strchr(args[i], '=');
-        if (eq)
-        {
-            *eq = '\0';
-            setenv(args[i], eq + 1, 1);
-        }
-        i++;
-    }
-    return (0);
-}
-
-static int builtin_unset(char **args)
-{
-    int i;
-
-    i = 1;
-    while (args[i])
-    {
-        unsetenv(args[i]);
-        i++;
-    }
-    return (0);
-}
-
-static int is_builtin(const char *cmd)
-{
-    if (!cmd)
-        return (0);
-    return (strcmp(cmd, "echo") == 0 || strcmp(cmd, "cd") == 0
-        || strcmp(cmd, "pwd") == 0 || strcmp(cmd, "env") == 0
-        || strcmp(cmd, "exit") == 0 || strcmp(cmd, "export") == 0
-        || strcmp(cmd, "unset") == 0);
-}
-
-static int exec_builtin(t_cmd_node *node)
-{
-    if (strcmp(node->cmd[0], "echo") == 0)
-        return (builtin_echo(node->cmd));
-    else if (strcmp(node->cmd[0], "cd") == 0)
-        return (builtin_cd(node->cmd));
-    else if (strcmp(node->cmd[0], "pwd") == 0)
-        return (builtin_pwd());
-    else if (strcmp(node->cmd[0], "env") == 0)
-        return (builtin_env());
-    else if (strcmp(node->cmd[0], "exit") == 0)
-        return (builtin_exit(node->cmd));
-    else if (strcmp(node->cmd[0], "export") == 0)
-        return (builtin_export(node->cmd));
-    else if (strcmp(node->cmd[0], "unset") == 0)
-        return (builtin_unset(node->cmd));
-    return (1);
-}
-
-/* ========================================================================== */
-/*                           Redirection utilities                            */
-/* ========================================================================== */
-
-static int apply_redirections(t_file_list *files)
-{
-    t_file_node *f;
-    int         fd;
-    int         pfd[2];
-
-    f = files ? files->head : NULL;
+    t_file_node *f = files ? files->head : NULL;
     while (f)
     {
-        if (f->redir_type == REDIR_IN)
-        {
-            fd = open(f->filename, O_RDONLY);
-            if (fd < 0)
-            {
-                perror(f->filename);
-                return (-1);
-            }
-            dup2(fd, STDIN_FILENO);
-            close(fd);
-        }
-        else if (f->redir_type == REDIR_OUT)
-        {
-            fd = open(f->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd < 0)
-            {
-                perror(f->filename);
-                return (-1);
-            }
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-        }
-        else if (f->redir_type == REDIR_APPEND)
-        {
-            fd = open(f->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd < 0)
-            {
-                perror(f->filename);
-                return (-1);
-            }
-            dup2(fd, STDOUT_FILENO);
-            close(fd);
-        }
-        else if (f->redir_type == REDIR_HEREDOC)
-        {
-            if (pipe(pfd) == -1)
-                return (-1);
-            write(pfd[1], f->filename, strlen(f->filename));
-            close(pfd[1]);
-            dup2(pfd[0], STDIN_FILENO);
-            close(pfd[0]);
-        }
+        if (f->redir_type == REDIR_IN && redir_in(f) == -1)
+            return (-1);
+        else if (f->redir_type == REDIR_OUT && redir_out(f) == -1)
+            return (-1);
+        else if (f->redir_type == REDIR_APPEND && redir_append(f) == -1)
+            return (-1);
+        else if (f->redir_type == REDIR_HEREDOC && redir_heredoc(f) == -1)
+            return (-1);
         f = f->next;
     }
     return (0);
 }
 
-/* ========================================================================== */
-/*                             Process execution                              */
-/* ========================================================================== */
+/* ========================================================================= */
+/*                           Process Execution                               */
+/* ========================================================================= */
 
-static int exec_external(t_cmd_node *node)
+int exec_external(t_cmd_node *node)
 {
-    pid_t   pid;
-    int     status;
+    pid_t pid;
+    int status;
 
     pid = fork();
     if (pid == 0)
@@ -240,87 +120,54 @@ static int exec_external(t_cmd_node *node)
     return (WIFEXITED(status) ? WEXITSTATUS(status) : 1);
 }
 
-static int execute_single(t_cmd_node *node)
+int exec_builtin_redir(t_cmd_node *node)
 {
-    int saved_in;
-    int saved_out;
+    int saved_in = dup(STDIN_FILENO);
+    int saved_out = dup(STDOUT_FILENO);
     int result;
 
-    if (!node->cmd || !node->cmd[0])
-        return (0);
-    if (is_builtin(node->cmd[0]))
+    if (apply_redirections(node->files) == -1)
     {
-        saved_in = dup(STDIN_FILENO);
-        saved_out = dup(STDOUT_FILENO);
-        if (apply_redirections(node->files) == -1)
-        {
-            dup2(saved_in, STDIN_FILENO);
-            dup2(saved_out, STDOUT_FILENO);
-            close(saved_in);
-            close(saved_out);
-            return (1);
-        }
-        result = exec_builtin(node);
         dup2(saved_in, STDIN_FILENO);
         dup2(saved_out, STDOUT_FILENO);
         close(saved_in);
         close(saved_out);
-        return (result);
+        return (1);
     }
+    result = exec_builtin(node);
+    dup2(saved_in, STDIN_FILENO);
+    dup2(saved_out, STDOUT_FILENO);
+    close(saved_in);
+    close(saved_out);
+    return (result);
+}
+
+int execute_single(t_cmd_node *node)
+{
+    if (!node->cmd || !node->cmd[0])
+        return (0);
+    if (is_builtin(node->cmd[0]))
+        return (exec_builtin_redir(node));
     return (exec_external(node));
 }
 
-/* ========================================================================== */
-/*                        Pipeline execution (simple)                         */
-/* ========================================================================== */
+/* ========================================================================= */
+/*                          Pipeline Execution                               */
+/* ========================================================================= */
 
-static t_cmd_node *exec_pipeline(t_cmd_node *start)
+pid_t spawn_stage(t_cmd_node *node, int in_fd, int out_fd)
 {
-    int         prev_fd;
-    int         pipefd[2];
-    pid_t       pids[64];
-    int         count;
-    t_cmd_node *node;
+    pid_t pid = fork();
 
-    prev_fd = STDIN_FILENO;
-    count = 0;
-    node = start;
-    while (node && node->cmd_type == CMD_PIPE)
-    {
-        if (pipe(pipefd) == -1)
-            return (node->next);
-        pids[count] = fork();
-        if (pids[count] == 0)
-        {
-            setup_child_signals();
-            dup2(prev_fd, STDIN_FILENO);
-            dup2(pipefd[1], STDOUT_FILENO);
-            if (prev_fd != STDIN_FILENO)
-                close(prev_fd);
-            close(pipefd[0]);
-            if (apply_redirections(node->files) == -1)
-                exit(1);
-            if (is_builtin(node->cmd[0]))
-                exit(exec_builtin(node));
-            execvp(node->cmd[0], node->cmd);
-            perror(node->cmd[0]);
-            exit(127);
-        }
-        if (prev_fd != STDIN_FILENO)
-            close(prev_fd);
-        close(pipefd[1]);
-        prev_fd = pipefd[0];
-        node = node->next;
-        count++;
-    }
-    /* last command */
-    pids[count] = fork();
-    if (pids[count] == 0)
+    if (pid == 0)
     {
         setup_child_signals();
-        dup2(prev_fd, STDIN_FILENO);
-        if (prev_fd != STDIN_FILENO)
-            close(prev_fd);
+        dup2(in_fd, STDIN_FILENO);
+        dup2(out_fd, STDOUT_FILENO);
+        if (in_fd != STDIN_FILENO)
+            close(in_fd);
+        if (out_fd != STDOUT_FILENO)
+            close(out_fd);
         if (apply_redirections(node->files) == -1)
             exit(1);
         if (is_builtin(node->cmd[0]))
@@ -329,17 +176,38 @@ static t_cmd_node *exec_pipeline(t_cmd_node *start)
         perror(node->cmd[0]);
         exit(127);
     }
-    if (prev_fd != STDIN_FILENO)
-        close(prev_fd);
-    count++;
+    return (pid);
+}
+
+t_cmd_node *exec_pipeline(t_cmd_node *start)
+{
+    int pipe_fd[2];
+    pid_t pids[64];
+    int in_fd = STDIN_FILENO;
+    int count = 0;
+    t_cmd_node *node = start;
+
+    while (node && node->cmd_type == CMD_PIPE)
+    {
+        pipe(pipe_fd);
+        pids[count++] = spawn_stage(node, in_fd, pipe_fd[1]);
+        close(pipe_fd[1]);
+        if (in_fd != STDIN_FILENO)
+            close(in_fd);
+        in_fd = pipe_fd[0];
+        node = node->next;
+    }
+    pids[count++] = spawn_stage(node, in_fd, STDOUT_FILENO);
+    if (in_fd != STDIN_FILENO)
+        close(in_fd);
     while (count-- > 0)
         waitpid(pids[count], NULL, 0);
     return (node->next);
 }
 
-/* ========================================================================== */
-/*                       Public execution entry point                         */
-/* ========================================================================== */
+/* ========================================================================= */
+/*                       Public Execution Entry Point                        */
+/* ========================================================================= */
 
 int execution_manager(t_cmd_list *cmd_list)
 {
@@ -361,75 +229,91 @@ int execution_manager(t_cmd_list *cmd_list)
     return (0);
 }
 
-/* ========================================================================== */
-/*                    Debug function to print parsed commands                 */
-/* ========================================================================== */
+/* ========================================================================= */
+/*                        Debug Utilities                                    */
+/* ========================================================================= */
+
+void print_files(t_file_node *file)
+{
+    while (file)
+    {
+        if (file->redir_type == REDIR_IN)
+            printf("  INPUT:  < %s\n", file->filename);
+        else if (file->redir_type == REDIR_OUT)
+            printf("  OUTPUT: > %s\n", file->filename);
+        else if (file->redir_type == REDIR_APPEND)
+            printf("  APPEND: >> %s\n", file->filename);
+        else if (file->redir_type == REDIR_HEREDOC)
+            printf("  HEREDOC: << (content stored)\n");
+        file = file->next;
+    }
+}
+
+void print_args(char **args)
+{
+    int i = 1;
+
+    if (!args[1])
+    {
+        printf("Arguments: (none)\n");
+        return;
+    }
+    printf("Arguments:\n");
+    while (args[i])
+    {
+        printf("  [%d] %s\n", i, args[i]);
+        i++;
+    }
+}
+
+void print_cmd_type(t_cmd_node *cmd)
+{
+    if (cmd->cmd_type == CMD_PIPE)
+        printf("Type: PIPE (connects to next command)\n");
+    else if (cmd->cmd_type == CMD_BACKGROUND)
+        printf("Type: BACKGROUND (&)\n");
+    else if (cmd->cmd_type == CMD_SIMPLE)
+        printf("Type: SIMPLE\n");
+    else
+        printf("Type: OTHER\n");
+}
+
+void print_command(t_cmd_node *cmd, int index)
+{
+    printf("\n--- Command %d ---\n", index);
+    print_cmd_type(cmd);
+    if (cmd->cmd && cmd->cmd[0])
+    {
+        printf("Program: %s\n", cmd->cmd[0]);
+        print_args(cmd->cmd);
+    }
+    else
+        printf("Program: (empty command)\n");
+    if (cmd->files && cmd->files->head)
+    {
+        printf("Redirections:\n");
+        print_files(cmd->files->head);
+    }
+    else
+        printf("Redirections: (none)\n");
+}
 
 void print_parsed_commands(t_cmd_list *cmd_list)
 {
-    t_cmd_node *current;
-    t_file_node *file;
-    int         cmd_index;
-    int         arg_index;
+    t_cmd_node *cur;
+    int index = 1;
 
     if (!cmd_list || !cmd_list->head)
     {
         printf("No commands to execute.\n");
-        return ;
+        return;
     }
     printf("\n========== PARSED COMMANDS ==========\n");
-    current = cmd_list->head;
-    cmd_index = 1;
-    while (current)
+    cur = cmd_list->head;
+    while (cur)
     {
-        printf("\n--- Command %d ---\n", cmd_index);
-        if (current->cmd_type == CMD_PIPE)
-            printf("Type: PIPE (connects to next command)\n");
-        else if (current->cmd_type == CMD_BACKGROUND)
-            printf("Type: BACKGROUND (&)\n");
-        else if (current->cmd_type == CMD_SIMPLE)
-            printf("Type: SIMPLE\n");
-        else
-            printf("Type: OTHER\n");
-        if (current->cmd && current->cmd[0])
-        {
-            printf("Program: %s\n", current->cmd[0]);
-            if (current->cmd[1])
-            {
-                printf("Arguments:\n");
-                arg_index = 1;
-                while (current->cmd[arg_index])
-                {
-                    printf("  [%d] %s\n", arg_index, current->cmd[arg_index]);
-                    arg_index++;
-                }
-            }
-            else
-                printf("Arguments: (none)\n");
-        }
-        else
-            printf("Program: (empty command)\n");
-        if (current->files && current->files->head)
-        {
-            printf("Redirections:\n");
-            file = current->files->head;
-            while (file)
-            {
-                if (file->redir_type == REDIR_IN)
-                    printf("  INPUT:  < %s\n", file->filename);
-                else if (file->redir_type == REDIR_OUT)
-                    printf("  OUTPUT: > %s\n", file->filename);
-                else if (file->redir_type == REDIR_APPEND)
-                    printf("  APPEND: >> %s\n", file->filename);
-                else if (file->redir_type == REDIR_HEREDOC)
-                    printf("  HEREDOC: << (content stored)\n");
-                file = file->next;
-            }
-        }
-        else
-            printf("Redirections: (none)\n");
-        current = current->next;
-        cmd_index++;
+        print_command(cur, index++);
+        cur = cur->next;
     }
     printf("\n====================================\n\n");
 }
