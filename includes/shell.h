@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 19:38:41 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:47:27 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,11 @@ void	run_shell_loop(void);
 /**
  * Signal.c - Signal handling functions for readline.
  */
-void	setup_parent_signals(void);
+void	initialize_shell_signals(void);
 void	setup_child_signals(void);
-void	prepare_readline_signals(void);
-void	handle_sigint_parent(int sig);
-void	handle_sigquit_parent(int sig);
+void	ignore_rl_sigint_and_sigquit(void);
+void	ignore_backslash(int sig);
+void	handle_ctrl_c(int sig);
 
 /**
  * handle_inputs.c - manages response for input edge cases

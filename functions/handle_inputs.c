@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:40:40 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/01 16:35:35 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,55 +14,6 @@
 #include "execute.h"
 #include <readline/readline.h>
 #include <readline/history.h>
-
-/**
- * Reads a line of input from the user.
- * Uses readline for input with history.
- */
-char	*read_input(void)
-{
-	char	*input;
-
-	input = readline("minishell> ");
-	if (input && *input)
-		add_history(input);
-	return (input);
-}
-
-/**
- * Checks if the input line is empty or only whitespace.
- * Returns true if line should be ignored.
- */
-bool	is_empty_line(const char *input)
-{
-	int	i;
-
-	if (!input)
-		return (true);
-	i = 0;
-	while (input[i])
-	{
-		if (input[i] != ' ' && input[i] != '\t')
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
-/**
- * Handles exit command processing.
- * Returns true if shell should exit.
- */
-bool	handle_exit_command(char *input)
-{
-	if (strcmp(input, "exit") == 0)
-	{
-		free(input);
-		printf("Goodbye!\n");
-		return (true);
-	}
-	return (false);
-}
 
 /**
  * Processes parsed command list.
@@ -94,4 +45,38 @@ void	process_input(char *input)
 		process_command_list(cmd_list);
 		cleanup_tokens(tokens, token_count);
 	}
+}
+
+/**
+ * Reads a line of input from the user.
+ * Uses readline for input with history.
+ */
+char	*read_input(void)
+{
+	char	*input;
+
+	input = readline("🐢minishell> ");
+	if (input && *input)
+		add_history(input);
+	return (input);
+}
+
+/**
+ * Checks if the input line is empty or only whitespace.
+ * Returns true if line should be ignored.
+ */
+bool	is_empty_line(const char *input)
+{
+	int	i;
+
+	if (!input)
+		return (true);
+	i = 0;
+	while (input[i])
+	{
+		if (input[i] != ' ' && input[i] != '\t')
+			return (false);
+		i++;
+	}
+	return (true);
 }

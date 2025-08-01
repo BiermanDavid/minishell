@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:48 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:41:49 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/01 13:40:28 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 #include <readline/history.h>
 
 /**
- * Handles SIGINT (Ctrl+C) in the parent shell.
- * Displays new prompt on new line when received.
+ * Voids the signal, returns new line as it should fort ctrl+c.
  */
-void	handle_sigint_parent(int sig)
+void	handle_ctrl_c(int sig)
 {
 	(void)sig;
 	write(1, "\n", 1);
@@ -29,36 +28,39 @@ void	handle_sigint_parent(int sig)
 }
 
 /**
- * Handles SIGQUIT (Ctrl+\) in the parent shell.
- * Does nothing as per requirements.
+ * does basically nothing as it should. ctrl+\ is voided.
  */
-void	handle_sigquit_parent(int sig)
+void	ignore_backslash(int sig)
 {
 	(void)sig;
 }
 
 /**
- * Sets up signal handlers for the parent shell.
- * Parent ignores SIGQUIT and handles SIGINT specially.
+ * Sets up kernel signals on startup, asynchronously whenever the signals arrive.
+ * 		Basically just rules for operating our terminal at the baseline.
+ * SIGINT handles ctrl+c printing of new line, clears prompt and uses SA_RESTART
+ * 		to interrupt any active system calls.
+ * SIGQUIT handles ctrl+\ by voiding the signal and doing nothing. Also
+ * 		ends any syscalls and prevents core dumping or shell quitting.
  */
-void	setup_parent_signals(void)
+void	initialize_shell_signals(void)
 {
-	struct sigaction	sa_int;
-	struct sigaction	sa_quit;
+	struct sigaction	interrupt_signal;
+	struct sigaction	quit_signal_action;
 
-	sigemptyset(&sa_int.sa_mask);
-	sa_int.sa_handler = handle_sigint_parent;
-	sa_int.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa_int, NULL);
-	sigemptyset(&sa_quit.sa_mask);
-	sa_quit.sa_handler = handle_sigquit_parent;
-	sa_quit.sa_flags = SA_RESTART;
-	sigaction(SIGQUIT, &sa_quit, NULL);
+	sigemptyset(&interrupt_signal.sa_mask);
+	interrupt_signal.sa_handler = handle_ctrl_c;
+	interrupt_signal.sa_flags = SA_RESTART;
+	sigaction(SIGINT, &interrupt_signal, NULL);
+	sigemptyset(&quit_signal_action.sa_mask);
+	quit_signal_action.sa_handler = ignore_backslash;
+	quit_signal_action.sa_flags = SA_RESTART;
+	sigaction(SIGQUIT, &quit_signal_action, NULL);
 }
 
 /**
- * Resets signal handlers to default for child processes.
- * Children should respond normally to signals.
+ * Clears blocked signals and restores SIGINT+SIGQUIT to default
+ * allows for forks and execs to run processes just like in the real shell.
  */
 void	setup_child_signals(void)
 {
@@ -75,7 +77,7 @@ void	setup_child_signals(void)
  * Handles special readline behaviors for signals.
  * Called before readline to ensure proper signal handling.
  */
-void	prepare_readline_signals(void)
+void	ignore_rl_sigint_and_sigquit(void)
 {
 	rl_catch_signals = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 18:25:33 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/01 16:35:12 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void	cleanup_tokens(t_token **tokens, int token_count)
 void	initialize_shell(void)
 {
 	printf("Welcome to minishell!\n");
-	setup_parent_signals();
-	prepare_readline_signals();
+	initialize_shell_signals();
+	ignore_rl_sigint_and_sigquit();
 }
 
 /**
@@ -80,8 +80,6 @@ int	main(void)
 			free(input);
 			continue ;
 		}
-		if (handle_exit_command(input))
-			break ;
 		process_input(input);
 		free(input);
 	}
