@@ -6,11 +6,13 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/02 20:10:32 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:00:27 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
+
+int g_exit_status = 0;
 
 /* ========================================================================= */
 /*                           Redirection Utilities                           */
@@ -20,7 +22,7 @@ int redir_in(t_file_node *f)
 {
     int fd = open(f->filename, O_RDONLY);
     if (fd < 0)
-    {
+	{
         perror(f->filename);
         return (-1);
     }
@@ -162,7 +164,7 @@ int execution_manager(t_cmd_list *cmd_list)
             node = exec_pipeline(node);
         else
         {
-            execute_single(node);
+			g_exit_status = execute_single(node);
             node = node->next;
         }
     }

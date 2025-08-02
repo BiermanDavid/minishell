@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/01 16:57:24 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:02:32 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"
+
+extern int g_exit_status;
 
 typedef struct s_file_node	t_file_node;
 typedef struct s_cmd_node	t_cmd_node;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 18:36:35 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:29:42 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,86 @@ int	extract_var_name(const char *input, int input_pos, char *var_name)
 	return (input_pos);
 }
 
+// /**
+//  * Processes a variable expansion in the input.
+//  * Handles $VAR expansion and updates positions.
+//  */
+// int	process_variable(const char *input, int input_pos, char *result,
+// 		int result_pos)
+// {
+// 	char	var_name[256];
+// 	char	*var_value;
+
+// 	input_pos++;
+// 	input_pos = extract_var_name(input, input_pos, var_name);
+// 	var_value = getenv(var_name);
+// 	result_pos = copy_var_value(result, result_pos, var_value);
+// 	return (result_pos);
+// }
+
 /**
  * Processes a variable expansion in the input.
  * Handles $VAR expansion and updates positions.
+ * TAYLORS VERSION
  */
-int	process_variable(const char *input, int input_pos, char *result,
-		int result_pos)
+int	process_variable(const char *input, int input_pos,
+	char *result, int *result_pos)
 {
 	char	var_name[256];
 	char	*var_value;
 
 	input_pos++;
+	if (input[input_pos] == '?')
+	{
+		var_value = ft_itoa(g_exit_status);
+		if (var_value)
+		{
+			*result_pos = copy_var_value(result, *result_pos, var_value);
+			free(var_value);
+		}
+		return (input_pos + 1);
+	}
 	input_pos = extract_var_name(input, input_pos, var_name);
 	var_value = getenv(var_name);
-	result_pos = copy_var_value(result, result_pos, var_value);
-	return (result_pos);
+	if (var_value)
+		*result_pos = copy_var_value(result, *result_pos, var_value);
+	return (input_pos);
 }
+
+// /**
+//  * Expands environment variables in a string.
+//  * Replaces $VAR with the value of environment variable VAR.
+//  */
+// char	*expand_variables(const char *input)
+// {
+// 	char	*result;
+// 	int		result_pos;
+// 	int		input_pos;
+
+// 	if (!input)
+// 		return (NULL);
+// 	result = malloc(1024);
+// 	if (!result)
+// 		return (NULL);
+// 	result_pos = 0;
+// 	input_pos = 0;
+// 	while (input[input_pos])
+// 	{
+// 		if (input[input_pos] == '$')
+// 			result_pos = process_variable(input, input_pos, result,
+// 					result_pos);
+// 		else
+// 			result[result_pos++] = input[input_pos];
+// 		input_pos++;
+// 	}
+// 	result[result_pos] = '\0';
+// 	return (result);
+// }
 
 /**
  * Expands environment variables in a string.
  * Replaces $VAR with the value of environment variable VAR.
+ * TAYLORS VERSION
  */
 char	*expand_variables(const char *input)
 {
@@ -59,7 +119,7 @@ char	*expand_variables(const char *input)
 
 	if (!input)
 		return (NULL);
-	result = malloc(1024);
+	result = ft_calloc(1024, sizeof(char));
 	if (!result)
 		return (NULL);
 	result_pos = 0;
@@ -67,11 +127,9 @@ char	*expand_variables(const char *input)
 	while (input[input_pos])
 	{
 		if (input[input_pos] == '$')
-			result_pos = process_variable(input, input_pos, result,
-					result_pos);
+			input_pos = process_variable(input, input_pos, result, &result_pos);
 		else
-			result[result_pos++] = input[input_pos];
-		input_pos++;
+			result[result_pos++] = input[input_pos++];
 	}
 	result[result_pos] = '\0';
 	return (result);

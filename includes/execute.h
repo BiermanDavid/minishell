@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/02 21:17:53 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 00:30:38 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,15 @@ void	print_parsed_commands(t_cmd_list *cmd_list);
  */
 int		builtin_echo(char **args);
 int		builtin_pwd(void);
-int 	builtin_cd(char **args);
-int 	builtin_env(void);
 int 	builtin_exit(char **args);
-int 	builtin_export(char **args);
-int 	builtin_unset(char **args);
+
 int 	is_builtin(const char *cmd);
-int		exec_builtin(t_cmd_node *node);
+int	exec_builtin(t_cmd_node *node, char ***envp);
+
+int	builtin_export(char **args, char ***envp);
+int	builtin_unset(char **args, char ***envp);
+int	builtin_cd(char **args, char **env);
+int	builtin_env(char **env);
 
 /**
  * execute.c
@@ -42,7 +44,24 @@ int		exec_builtin(t_cmd_node *node);
  */
 int execution_manager(t_cmd_list *cmd_list);
 
+char	*env_get(char **env, const char *key);
 
+/**
+ * Setzt oder ersetzt eine Umgebungsvariable im env-Array.
+ * Bei Erfolg wird 0 zurückgegeben, bei Fehler 1.
+ */
+int		env_set(char ***envp, const char *key, const char *value);
+
+/**
+ * Entfernt eine Umgebungsvariable aus dem env-Array.
+ * Bei Erfolg wird 0 zurückgegeben, bei Misserfolg 1.
+ */
+int		env_unset(char ***envp, const char *key);
+
+/**
+ * Gibt alle Umgebungsvariablen im env-Array aus.
+ */
+void	env_print(char **env);
 
 /* ========================================================================= */
 /*                          Redirection Utilities                            */

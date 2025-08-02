@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/02 20:12:31 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:32:35 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,15 @@ pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int
 	return (pid);
 }
 
-
 t_cmd_node	*exec_pipeline(t_cmd_node *start)
 {
 	t_cmd_node	*node;
-	t_cmd_node	*last;
 	pid_t		pids[64];
 	int			pipes[64][2];
 	int			i;
+	int			status;
 
 	node = start;
-	last = NULL;
 	i = 0;
 	while (node && node->cmd_type == CMD_PIPE)
 	{
@@ -76,6 +74,10 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start)
 	if (i > 0)
 		close(pipes[i - 1][0]);
 	while (i >= 0)
-		waitpid(pids[i--], NULL, 0);
+	{
+		waitpid(pids[i], &status, 0);
+		i--;
+	}
+	g_exit_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
 	return (node->next);
 }
