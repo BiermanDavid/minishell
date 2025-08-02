@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/02 22:00:27 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 01:11:13 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,35 +116,35 @@ int exec_external(t_cmd_node *node)
     return (WIFEXITED(status) ? WEXITSTATUS(status) : 1);
 }
 
-int exec_builtin_redir(t_cmd_node *node)
+int	exec_builtin_redir(t_cmd_node *node, char ***envp)
 {
-    int saved_in = dup(STDIN_FILENO);
-    int saved_out = dup(STDOUT_FILENO);
-    int result;
+	int	saved_in = dup(STDIN_FILENO);
+	int	saved_out = dup(STDOUT_FILENO);
+	int	result;
 
-    if (apply_redirections(node->files) == -1)
-    {
-        dup2(saved_in, STDIN_FILENO);
-        dup2(saved_out, STDOUT_FILENO);
-        close(saved_in);
-        close(saved_out);
-        return (1);
-    }
-    result = exec_builtin(node);
-    dup2(saved_in, STDIN_FILENO);
-    dup2(saved_out, STDOUT_FILENO);
-    close(saved_in);
-    close(saved_out);
-    return (result);
+	if (apply_redirections(node->files) == -1)
+	{
+		dup2(saved_in, STDIN_FILENO);
+		dup2(saved_out, STDOUT_FILENO);
+		close(saved_in);
+		close(saved_out);
+		return (1);
+	}
+	result = exec_builtin(node, envp);
+	dup2(saved_in, STDIN_FILENO);
+	dup2(saved_out, STDOUT_FILENO);
+	close(saved_in);
+	close(saved_out);
+	return (result);
 }
 
-int execute_single(t_cmd_node *node)
+int	execute_single(t_cmd_node *node, char ***envp)
 {
-    if (!node->cmd || !node->cmd[0])
-        return (0);
-    if (is_builtin(node->cmd[0]))
-        return (exec_builtin_redir(node));
-    return (exec_external(node));
+	if (!node->cmd || !node->cmd[0])
+		return (0);
+	if (is_builtin(node->cmd[0]))
+		return (exec_builtin_redir(node, envp));
+	return (exec_external(node, *envp));
 }
 
 /* ========================================================================= */

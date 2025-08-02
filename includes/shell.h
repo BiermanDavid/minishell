@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/02 22:02:32 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 00:58:36 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/types.h>
 # include <unistd.h>
 # include <ctype.h>
+# include <limits.h>
 # include <fcntl.h>
 # include <sys/wait.h>
 # include "../libft/libft.h"

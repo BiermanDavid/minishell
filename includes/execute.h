@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 00:30:38 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 01:07:52 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ int apply_redirections(t_file_list *files);
 /*                          Process Execution                                */
 /* ========================================================================= */
 
-int exec_external(t_cmd_node *node);
-int exec_builtin_redir(t_cmd_node *node);
-int execute_single(t_cmd_node *node);
+int exec_external(t_cmd_node *node, char **env);
+int	exec_builtin_redir(t_cmd_node *node, char ***envp);
+int execute_single(t_cmd_node *node, char ***envp);
 
 /* ========================================================================= */
 /*                          Pipeline Execution                               */
