@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 21:45:35 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:17:53 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ int		exec_builtin(t_cmd_node *node);
  */
 int execution_manager(t_cmd_list *cmd_list);
 
-/**
- * Gibt die geparsten Befehle formatiert im Terminal aus (für Debugging).
- */
-void print_parsed_commands(t_cmd_list *cmd_list);
+
 
 /* ========================================================================= */
 /*                          Redirection Utilities                            */
@@ -69,13 +66,16 @@ int execute_single(t_cmd_node *node);
 /*                          Pipeline Execution                               */
 /* ========================================================================= */
 
-pid_t spawn_stage(t_cmd_node *node, int in_fd, int out_fd);
-t_cmd_node *exec_pipeline(t_cmd_node *start);
+pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int total);
+t_cmd_node	*exec_pipeline(t_cmd_node *start);
 
-/* ========================================================================= */
-/*                             Debug Utilities                               */
-/* ========================================================================= */
 
+/**
+ * debug.c
+ * Debug Utilities for parsed commands. Shows: Type, 
+ * Program, Arguments and Redirections
+ */
+void print_parsed_commands(t_cmd_list *cmd_list);
 void print_command(t_cmd_node *cmd, int index);
 void print_args(char **args);
 void print_cmd_type(t_cmd_node *cmd);

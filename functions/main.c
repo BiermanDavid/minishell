@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/01 16:35:12 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/02 19:35:23 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	main(void)
 		input = read_input();
 		if (!input)
 		{
-			printf("Goodbye!\n");
+			// printf("Goodbye!\n"); // Maybe add perror
 			break ;
 		}
 		if (is_empty_line(input))
@@ -85,3 +85,4 @@ int	main(void)
 	}
 	return (0);
 }
+

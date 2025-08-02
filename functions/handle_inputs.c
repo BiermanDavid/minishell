@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_inputs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/01 16:35:35 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/02 19:52:55 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,9 @@ void	process_input(char *input)
 	if (tokens && token_count > 0)
 	{
 		cmd_list = parse_command(tokens, token_count);
+#ifdef DEBUG_MOD
+		print_parsed_commands(cmd_list); //DEBUG_MOD
+#endif
 		process_command_list(cmd_list);
 		cleanup_tokens(tokens, token_count);
 	}

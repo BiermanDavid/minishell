@@ -6,120 +6,76 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/07/30 21:47:14 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:12:31 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "execute.h"
-// #include "shell.h"
-// #include "../libft/libft.h"
-// #include <sys/wait.h>
+#include "execute.h"
 
-// /**
-//  * Frees a NULL terminated array of strings.
-//  */
-// static void    free_split(char **arr)
-// {
-//     size_t  i;
+/**
+ * Pipeline Execution
+ */
+pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int total)
+{
+	pid_t	pid;
+	int		i;
 
-//     if (!arr)
-//         return ;
-//     i = 0;
-//     while (arr[i])
-//     {
-//         free(arr[i]);
-//         i++;
-//     }
-//     free(arr);
-// }
+	pid = fork();
+	if (pid == 0)
+	{
+		setup_child_signals();
+		dup2(in_fd, STDIN_FILENO);
+		dup2(out_fd, STDOUT_FILENO);
+		i = 0;
+		while (i < total)
+		{
+			if (pipes[i][0] != in_fd)
+				close(pipes[i][0]);
+			if (pipes[i][1] != out_fd)
+				close(pipes[i][1]);
+			i++;
+		}
+		if (apply_redirections(node->files) == -1)
+			exit(1);
+		if (is_builtin(node->cmd[0]))
+			exit(exec_builtin(node));
+		execvp(node->cmd[0], node->cmd);
+		perror(node->cmd[0]);
+		exit(127);
+	}
+	return (pid);
+}
 
-// /**
-//  * Searches PATH for executable corresponding to cmd.
-//  * Returns allocated path string or NULL if not found.
-//  */
-// static char    *find_cmd(char *cmd)
-// {
-//     char    **paths;
-//     char    *full;
-//     char    *tmp;
-//     int     i;
 
-//     paths = ft_split(getenv("PATH"), ':');
-//     i = 0;
-//     if (!paths || access(cmd, X_OK) == 0)
-//         return (cmd);
-//     while (paths[i])
-//     {
-//         tmp = ft_strjoin(paths[i], "/");
-//         full = ft_strjoin(tmp, cmd);
-//         free(tmp);
-//         if (access(full, X_OK) == 0)
-//             return (full);
-//         free(full);
-//         i++;
-//     }
-//     free_split(paths);
-//     return (NULL);
-// }
+t_cmd_node	*exec_pipeline(t_cmd_node *start)
+{
+	t_cmd_node	*node;
+	t_cmd_node	*last;
+	pid_t		pids[64];
+	int			pipes[64][2];
+	int			i;
 
-// /**
-//  * Executes one command in a child process.
-//  * in_fd/out_fd specify the pipe ends to use.
-//  */
-// static void    child_process(t_cmd_node *cmd, int in_fd,
-//                              int out_fd, char **envp)
-// {
-//     char    **argv;
-//     char    *cmd_path;
-
-//     dup2(in_fd, 0);
-//     dup2(out_fd, 1);
-//     argv = cmd->cmd;
-//     cmd_path = find_cmd(argv[0]);
-//     if (!cmd_path)
-//     {
-//         fprintf(stderr, "minishell: %s: command not found\n", argv[0]);
-//         exit(1);
-//     }
-//     execve(cmd_path, argv, envp);
-//     perror("execve failed");
-//     exit(1);
-// }
-
-// /**
-//  * Forks a new process to execute one stage of the pipeline.
-//  */
-// static void    spawn_stage(t_cmd_node *cmd, int in_fd,
-//                           int out_fd, char **envp)
-// {
-//     if (fork() == 0)
-//         child_process(cmd, in_fd, out_fd, envp);
-// }
-
-// /**
-//  * Executes a list of commands connected by pipes.
-//  */
-// void    run_piped_commands(t_cmd_list *cmd_list, char **envp)
-// {
-//     int         pipe_fd[2];
-//     int         in_fd;
-//     t_cmd_node  *cmd;
-
-//     in_fd = 0;
-//     cmd = cmd_list->head;
-//     while (cmd && cmd->next)
-//     {
-//         pipe(pipe_fd);
-//         spawn_stage(cmd, in_fd, pipe_fd[1], envp);
-//         close(pipe_fd[1]);
-//         if (in_fd != 0)
-//             close(in_fd);
-//         in_fd = pipe_fd[0];
-//         cmd = cmd->next;
-//     }
-//     spawn_stage(cmd, in_fd, 1, envp);
-//     if (in_fd != 0)
-//         close(in_fd);
-//     while (wait(NULL) > 0)
-//         ;
-// }
+	node = start;
+	last = NULL;
+	i = 0;
+	while (node && node->cmd_type == CMD_PIPE)
+	{
+		pipe(pipes[i]);
+		pids[i] = spawn_stage(node,
+				i == 0 ? STDIN_FILENO : pipes[i - 1][0],
+				pipes[i][1], pipes, i + 1);
+		if (i > 0)
+			close(pipes[i - 1][0]);
+		close(pipes[i][1]);
+		node = node->next;
+		i++;
+	}
+	pids[i] = spawn_stage(node,
+			i == 0 ? STDIN_FILENO : pipes[i - 1][0],
+			STDOUT_FILENO, pipes, i + 1);
+	if (i > 0)
+		close(pipes[i - 1][0]);
+	while (i >= 0)
+		waitpid(pids[i--], NULL, 0);
+	return (node->next);
+}

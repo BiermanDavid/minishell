@@ -7,7 +7,7 @@ LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
-TARGET = shell
+TARGET = minishell
 
 # Add readline library
 LIBS = -lreadline
@@ -49,3 +49,8 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re message
+
+DEBUG_FLAGS = -DDEBUG_MOD
+
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: re
