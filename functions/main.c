@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 00:01:21 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 02:18:19 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,20 @@ void	initialize_shell(void)
  * Main shell loop that handles the read-eval-print cycle.
  * Continues until user exits or EOF is encountered.
  */
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
+	char	**new_envp;
 
+	(void)argc;
+	(void)argv;
 	initialize_shell();
+	new_envp = duplicate_env(envp);
 	while (true)
 	{
 		input = read_input();
 		if (!input)
 		{
-			// printf("Goodbye!\n"); // Maybe add perror
 			break ;
 		}
 		if (is_empty_line(input))
@@ -80,8 +83,9 @@ int	main(void)
 			free(input);
 			continue ;
 		}
-		process_input(input);
+		process_input(input, &new_envp);
 		free(input);
 	}
+	free_env(new_envp);
 	return (0);
 }

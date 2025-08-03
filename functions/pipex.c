@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/02 22:32:35 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 01:43:09 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /**
  * Pipeline Execution
  */
-pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int total)
+pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int total, char ***envp)
 {
 	pid_t	pid;
 	int		i;
@@ -38,15 +38,15 @@ pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int
 		if (apply_redirections(node->files) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))
-			exit(exec_builtin(node));
-		execvp(node->cmd[0], node->cmd);
+			exit(exec_builtin(node, envp));
+		exec_command(node, *envp);
 		perror(node->cmd[0]);
 		exit(127);
 	}
 	return (pid);
 }
 
-t_cmd_node	*exec_pipeline(t_cmd_node *start)
+t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 {
 	t_cmd_node	*node;
 	pid_t		pids[64];
@@ -61,7 +61,7 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start)
 		pipe(pipes[i]);
 		pids[i] = spawn_stage(node,
 				i == 0 ? STDIN_FILENO : pipes[i - 1][0],
-				pipes[i][1], pipes, i + 1);
+				pipes[i][1], pipes, i + 1, envp);
 		if (i > 0)
 			close(pipes[i - 1][0]);
 		close(pipes[i][1]);
@@ -70,7 +70,7 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start)
 	}
 	pids[i] = spawn_stage(node,
 			i == 0 ? STDIN_FILENO : pipes[i - 1][0],
-			STDOUT_FILENO, pipes, i + 1);
+			STDOUT_FILENO, pipes, i + 1, envp);
 	if (i > 0)
 		close(pipes[i - 1][0]);
 	while (i >= 0)

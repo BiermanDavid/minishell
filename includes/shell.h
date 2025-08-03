@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 00:58:36 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 01:36:20 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,6 @@ void	handle_ctrl_c(int sig);
 char	*read_input(void);
 bool	is_empty_line(const char *input);
 bool	handle_exit_command(char *input);
-void	process_input(char *input);
+void    process_input(char *input, char ***envp);
 
 #endif

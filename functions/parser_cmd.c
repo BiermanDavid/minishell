@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:43:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 16:32:38 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/03 02:29:50 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,16 +47,35 @@ char	**allocate_args_array(int word_count)
 	return (args);
 }
 
+// /**
+//  * Processes a single token for command arguments.
+//  * Expands token if needed and creates string copy.
+//  */
+// char	*process_token_arg(t_token *token)
+// {
+// 	char	*expanded;
+// 	char	*result;
+
+// 	expanded = expand_token(token->value);
+// 	if (expanded)
+// 		return (expanded);
+// 	result = malloc(strlen(token->value) + 1);
+// 	if (result)
+// 		strcpy(result, token->value);
+// 	return (result);
+// }
+
 /**
  * Processes a single token for command arguments.
  * Expands token if needed and creates string copy.
+ * TAYLORS VERSION
  */
-char	*process_token_arg(t_token *token)
+char	*process_token_arg(t_token *token, char **envp)
 {
 	char	*expanded;
 	char	*result;
 
-	expanded = expand_token(token->value);
+	expanded = expand_token(token->value, envp);
 	if (expanded)
 		return (expanded);
 	result = malloc(strlen(token->value) + 1);
@@ -65,11 +84,35 @@ char	*process_token_arg(t_token *token)
 	return (result);
 }
 
+
+// /**
+//  * Extracts command arguments from tokens.
+//  * Creates the args array for a command node.
+//  */
+// char	**extract_command_args(t_token **tokens, int start, int word_count)
+// {
+// 	char	**args;
+// 	int		i;
+
+// 	args = allocate_args_array(word_count);
+// 	if (!args)
+// 		return (NULL);
+// 	i = 0;
+// 	while (i < word_count)
+// 	{
+// 		args[i] = process_token_arg(tokens[start + i]);
+// 		i++;
+// 	}
+// 	args[word_count] = NULL;
+// 	return (args);
+// }
+
 /**
  * Extracts command arguments from tokens.
  * Creates the args array for a command node.
+ * TAYLORS VERSION
  */
-char	**extract_command_args(t_token **tokens, int start, int word_count)
+char	**extract_command_args(t_token **tokens, int start, int word_count, char **envp)
 {
 	char	**args;
 	int		i;
@@ -80,7 +123,7 @@ char	**extract_command_args(t_token **tokens, int start, int word_count)
 	i = 0;
 	while (i < word_count)
 	{
-		args[i] = process_token_arg(tokens[start + i]);
+		args[i] = process_token_arg(tokens[start + i], envp);
 		i++;
 	}
 	args[word_count] = NULL;
