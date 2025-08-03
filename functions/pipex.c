@@ -6,16 +6,17 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 01:43:09 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:39:27 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Pipeline Execution
+ * Spawns a process for a single pipeline stage.
  */
-pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int total, char ***envp)
+pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd,
+		int pipes[64][2], int total, char ***envp)
 {
 	pid_t	pid;
 	int		i;
@@ -46,21 +47,21 @@ pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd, int pipes[64][2], int
 	return (pid);
 }
 
-t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
+int	setup_pipeline(t_cmd_node *node, pid_t *pids,
+	int pipes[64][2], char ***envp)
 {
-	t_cmd_node	*node;
-	pid_t		pids[64];
-	int			pipes[64][2];
-	int			i;
-	int			status;
+	int	i;
+	int	in_fd;
 
-	node = start;
 	i = 0;
 	while (node && node->cmd_type == CMD_PIPE)
 	{
 		pipe(pipes[i]);
-		pids[i] = spawn_stage(node,
-				i == 0 ? STDIN_FILENO : pipes[i - 1][0],
+		if (i == 0)
+			in_fd = STDIN_FILENO;
+		else
+			in_fd = pipes[i - 1][0];
+		pids[i] = spawn_stage(node, in_fd,
 				pipes[i][1], pipes, i + 1, envp);
 		if (i > 0)
 			close(pipes[i - 1][0]);
@@ -68,16 +69,51 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 		node = node->next;
 		i++;
 	}
-	pids[i] = spawn_stage(node,
-			i == 0 ? STDIN_FILENO : pipes[i - 1][0],
-			STDOUT_FILENO, pipes, i + 1, envp);
+	return (i);
+}
+
+void	final_stage(t_cmd_node *node, pid_t *pids,
+	int pipes[64][2], int i, char ***envp)
+{
+	int	in_fd;
+
+	if (i == 0)
+		in_fd = STDIN_FILENO;
+	else
+		in_fd = pipes[i - 1][0];
+	pids[i] = spawn_stage(node, in_fd, STDOUT_FILENO,
+			pipes, i + 1, envp);
 	if (i > 0)
 		close(pipes[i - 1][0]);
-	while (i >= 0)
+}
+
+void	wait_for_pipeline(pid_t *pids, int count, int *status)
+{
+	while (count >= 0)
 	{
-		waitpid(pids[i], &status, 0);
-		i--;
+		waitpid(pids[count], status, 0);
+		count--;
 	}
-	g_exit_status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
+}
+
+/**
+ * Executes a pipeline of commands.
+ */
+t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
+{
+	t_cmd_node	*node;
+	pid_t		pids[64];
+	int			pipes[64][2];
+	int			status;
+	int			count;
+
+	node = start;
+	count = setup_pipeline(start, pids, pipes, envp);
+	final_stage(node, pids, pipes, count, envp);
+	wait_for_pipeline(pids, count, &status);
+	if (WIFEXITED(status))
+		g_exit_status = WEXITSTATUS(status);
+	else
+		g_exit_status = 1;
 	return (node->next);
 }

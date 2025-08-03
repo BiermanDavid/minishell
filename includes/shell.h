@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 01:36:20 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:15:58 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <limits.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <ctype.h>
 # include "../libft/libft.h"
 
 extern int g_exit_status;

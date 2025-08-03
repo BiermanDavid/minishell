@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 18:47:26 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:10:58 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSE_H
 # define PARSE_H
 # include "shell.h"
+# include "execute.h"
 
 /**
  * Token creation and basic lexical analysis functions.
@@ -24,24 +25,24 @@ void		destroy_token(t_token *token);
 /**
  * parse.c - parsing
  */
-t_cmd_list	*parse_command(t_token **token, int j);
+t_cmd_list	*parse_command(t_token **token, int j, char **env);
 
 /**
  * parser_cmd.c - Command parsing and command list creation functions.
  */
 void		add_cmd_to_list(t_cmd_list *list, t_cmd_node *node);
 char		**allocate_args_array(int word_count);
-char		*process_token_arg(t_token *token);
-char		**extract_command_args(t_token **token, int start, int word_count);
+char		*process_token_arg(t_token *token, char **envp);
+char		**extract_command_args(t_token **token, int start, int word_count, char **envp);
 
 /**
  * Variable expansion and quote processing for shell input.
  */
-char		*expand_variables(const char *input);
+char		*expand_variables(const char *input, char **envp);
 char		*process_single_quotes(const char *input);
-char		*process_double_quotes(const char *input);
-char		*process_quoted_string(const char *input);
-char		*expand_token(const char *token_value);
+char		*process_double_quotes(const char *input, char **envp);
+char		*process_quoted_string(const char *input, char **envp);
+char		*expand_token(const char *token_value, char **envp);
 
 /**
  * make_parser_nodes.c -
@@ -102,6 +103,5 @@ void		free_cmd_list(t_cmd_list *list);
 int			copy_var_value(char *result, int result_pos, const char *var_value);
 void		remove_quotes(char *result, const char *input, int len);
 char		*process_single_quotes(const char *input);
-char		*process_double_quotes(const char *input);
 
 #endif

@@ -6,47 +6,42 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 23:45:17 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 02:07:03 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:19:46 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-#include <ctype.h>
 
-int	is_valid_identifier(const char *str)
+static int	handle_export_argument(char *arg, char ***envp)
 {
-	if (!str || (!isalpha(str[0]) && str[0] != '_'))
-		return (0);
-	for (int i = 1; str[i] && str[i] != '='; i++)
-	{
-		if (!isalnum(str[i]) && str[i] != '_')
-			return (0);
-	}
-	return (1);
-}
+	char	*eq;
+	int		result;
 
-int is_assignment(const char *str)
-{
-	int i = 0;
-	char *eq = strchr(str, '=');
-	if (!eq || eq == str)
-		return (0);
-	if (!isalpha(str[0]) && str[0] != '_')
-		return (0);
-	while (str + i < eq)
+	eq = strchr(arg, '=');
+	if (eq)
 	{
-		if (!isalnum(str[i]) && str[i] != '_')
-			return (0);
-		i++;
+		*eq = '\0';
+		if (!is_valid_identifier(arg))
+		{
+			printf("minishell: export: `%s': not a valid identifier\n", arg);
+			*eq = '=';
+			return (1);
+		}
+		result = env_set(envp, arg, eq + 1);
+		*eq = '=';
+		return (result);
 	}
-	return (1);
+	else if (!is_valid_identifier(arg))
+	{
+		printf("minishell: export: `%s': not a valid identifier\n", arg);
+		return (1);
+	}
+	return (0);
 }
-
 
 int	builtin_export(char **args, char ***envp)
 {
-	int		i;
-	char	*eq;
+	int	i;
 
 	if (!args[1])
 	{
@@ -56,25 +51,7 @@ int	builtin_export(char **args, char ***envp)
 	i = 1;
 	while (args[i])
 	{
-		eq = strchr(args[i], '=');
-		if (eq)
-		{
-			*eq = '\0';
-			if (!is_valid_identifier(args[i]))
-			{
-				fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", args[i]);
-				*eq = '=';
-				i++;
-				continue ;
-			}
-			env_set(envp, args[i], eq + 1);
-			*eq = '=';
-		}
-		else
-		{
-			if (!is_valid_identifier(args[i]))
-				fprintf(stderr, "minishell: export: `%s': not a valid identifier\n", args[i]);
-		}
+		handle_export_argument(args[i], envp);
 		i++;
 	}
 	return (0);

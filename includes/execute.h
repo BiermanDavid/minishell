@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 02:19:03 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:17:08 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int     builtin_echo(char **args);
 int     builtin_pwd(void);
 int     builtin_exit(char **args);
 int     is_builtin(const char *cmd);
+int		is_valid_identifier(const char *str);
 int 	is_assignment(const char *str);
 int     exec_builtin(t_cmd_node *node, char ***envp);
 int     builtin_export(char **args, char ***envp);

@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:25:13 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 02:18:32 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:27:08 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,27 +119,4 @@ void	env_print(char **env)
 		printf("%s\n", env[i]);
 		i++;
 	}
-}
-
-char **duplicate_env(char **envp)
-{
-	int		i;
-	char	**new_env;
-
-	for (i = 0; envp && envp[i]; i++);
-	new_env = malloc(sizeof(char *) * (i + 1));
-	if (!new_env)
-		return (NULL);
-	for (i = 0; envp && envp[i]; i++)
-		new_env[i] = strdup(envp[i]);
-	new_env[i] = NULL;
-	return (new_env);
-}
-
-void free_env(char **env)
-{
-	int i = 0;
-	while (env && env[i])
-		free(env[i++]);
-	free(env);
 }

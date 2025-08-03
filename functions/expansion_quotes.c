@@ -6,31 +6,15 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:35:33 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/02 22:09:50 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/03 03:32:13 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
-// /**
-//  * Copies variable value to result buffer.
-//  * Appends environment variable value to result string.
-//  */
-// int	copy_var_value(char *result, int result_pos, const char *var_value)
-// {
-// 	int	value_len;
-
-// 	if (!var_value)
-// 		return (result_pos);
-// 	value_len = strlen(var_value);
-// 	strcpy(result + result_pos, var_value);
-// 	return (result_pos + value_len);
-// }
-
 /**
  * Copies variable value to result buffer.
  * Appends environment variable value to result string.
- * TAYLORS VERSION
  */
 int	copy_var_value(char *result, int result_pos, const char *var_value)
 {
@@ -84,7 +68,7 @@ char	*process_single_quotes(const char *input)
  * Processes double quoted strings (with expansion).
  * Variables inside double quotes are expanded.
  */
-char	*process_double_quotes(const char *input)
+char	*process_double_quotes(const char *input, char **envp)
 {
 	int		len;
 	char	*temp;
@@ -97,7 +81,7 @@ char	*process_double_quotes(const char *input)
 	if (!temp)
 		return (NULL);
 	remove_quotes(temp, input, len);
-	result = expand_variables(temp);
+	result = expand_variables(temp, envp);
 	free(temp);
 	return (result);
 }

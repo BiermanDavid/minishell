@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 17:33:39 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/03 02:58:34 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	skip_separators(t_token **tokens, int i, int token_count)
  * Creates command node and parses arguments and redirections.
  */
 int	process_single_command(t_token **tokens, int i, int token_count,
-		t_cmd_list *cmd_list)
+	t_cmd_list *cmd_list, char **env)
 {
 	t_cmd_node	*current_cmd;
 	int			word_count;
@@ -75,7 +75,7 @@ int	process_single_command(t_token **tokens, int i, int token_count,
 	current_cmd = create_cmd_node(CMD_SIMPLE);
 	if (!current_cmd)
 		return (token_count);
-	current_cmd->cmd = extract_command_args(tokens, i, word_count);
+	current_cmd->cmd = extract_command_args(tokens, i, word_count, env);
 	i += word_count;
 	i = parse_redir(tokens, i, token_count, current_cmd);
 	set_command_type(current_cmd, tokens, i, token_count);
@@ -91,7 +91,7 @@ int	process_single_command(t_token **tokens, int i, int token_count,
  * Main parser - creates clear pipe chains for execution.
  * CMD_PIPE means "pipes to next command", CMD_PIPE_END means "last in chain".
  */
-t_cmd_list	*parse_command(t_token **tokens, int token_count)
+t_cmd_list	*parse_command(t_token **tokens, int token_count, char **env)
 {
 	t_cmd_list	*cmd_list;
 	int			i;
@@ -107,7 +107,7 @@ t_cmd_list	*parse_command(t_token **tokens, int token_count)
 		i = skip_separators(tokens, i, token_count);
 		if (i >= token_count)
 			break ;
-		i = process_single_command(tokens, i, token_count, cmd_list);
+		i = process_single_command(tokens, i, token_count, cmd_list, env);
 	}
 	return (cmd_list);
 }
