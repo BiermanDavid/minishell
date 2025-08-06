@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:13 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/04 22:40:36 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:42:53 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	print_command_not_found(const char *cmd)
 {
 	if (!cmd)
 		return ;
-	printf("minishell: %s: command not found\n", cmd);
+	printf("minishell: command not found: %s\n", cmd);
+	exit(127);
 }
 
 /**
@@ -50,5 +51,6 @@ void	print_permission_denied(const char *cmd)
 {
 	if (!cmd)
 		return ;
-	printf("minishell: %s: permission denied\n", cmd);
+	printf("minishell: permission denied: %s\n", cmd);
+	exit(126);
 }

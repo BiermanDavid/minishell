@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:10:58 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 22:41:53 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ void		destroy_token(t_token *token);
  * parse.c - parsing
  */
 t_cmd_list	*parse_command(t_token **token, int j, char **env);
+
+int		count_all_command_words(t_token **tokens, int start, int token_count);
+char	**extract_all_command_args(t_token **tokens, int start, int end, char **envp);
+int		find_command_end(t_token **tokens, int start, int token_count);
 
 /**
  * parser_cmd.c - Command parsing and command list creation functions.
@@ -116,5 +120,12 @@ void		free_cmd_list(t_cmd_list *list);
 int			copy_var_value(char *result, int result_pos, const char *var_value);
 void		remove_quotes(char *result, const char *input, int len);
 char		*process_single_quotes(const char *input);
+
+int		copy_unquoted_section(const char *input, int start, char *result, int *result_pos);
+int		has_mixed_quotes(const char *input);
+char	*process_mixed_content(const char *input, char **envp);
+int		process_quoted_part(const char *input, int pos, char *result, int *result_pos, char **envp);
+int	process_single_command(t_token_data *data, int i, t_cmd_list *cmd_list, char **env);
+
 
 #endif

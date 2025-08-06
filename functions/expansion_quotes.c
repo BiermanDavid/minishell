@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:35:33 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:32:13 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 22:28:09 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,4 +84,113 @@ char	*process_double_quotes(const char *input, char **envp)
 	result = expand_variables(temp, envp);
 	free(temp);
 	return (result);
+}
+/**
+ * Checks if token contains mixed quoted and unquoted content.
+ * Returns true if token needs special mixed processing.
+ */
+int	has_mixed_quotes(const char *input)
+{
+	int	i;
+	int	quote_found;
+
+	i = 0;
+	quote_found = 0;
+	while (input[i])
+	{
+		if (input[i] == '\'' || input[i] == '"')
+		{
+			if (i > 0 || quote_found)
+				return (1);
+			quote_found = 1;
+			while (input[i] && input[i + 1] && input[i + 1] != input[i])
+				i++;
+			if (input[i + 1])
+				i += 2;
+			if (input[i])
+				return (1);
+		}
+		else
+			i++;
+	}
+	return (0);
+}
+
+/**
+ * Processes mixed quoted and unquoted content.
+ * Handles tokens like hello'world' correctly.
+ */
+char	*process_mixed_content(const char *input, char **envp)
+{
+	char	*result;
+	int		input_pos;
+	int		result_pos;
+
+	result = ft_calloc(1024, sizeof(char));
+	if (!result)
+		return (NULL);
+	input_pos = 0;
+	result_pos = 0;
+	while (input[input_pos])
+	{
+		if (input[input_pos] == '\'' || input[input_pos] == '"')
+			input_pos = process_quoted_part(input, input_pos, result,
+					&result_pos, envp);
+		else
+			input_pos = copy_unquoted_section(input, input_pos, result,
+					&result_pos);
+	}
+	result[result_pos] = '\0';
+	return (result);
+}
+
+/**
+ * Processes quoted section in mixed content.
+ * Handles single or double quoted sections appropriately.
+ */
+int	process_quoted_part(const char *input, int pos, char *result,
+		int *result_pos, char **envp)
+{
+	char	quote_char;
+	char	temp[1024];
+	char	*processed;
+	int		temp_pos;
+
+	quote_char = input[pos];
+	temp_pos = 0;
+	temp[temp_pos++] = input[pos++];
+	while (input[pos] && input[pos] != quote_char)
+		temp[temp_pos++] = input[pos++];
+	if (input[pos] == quote_char)
+		temp[temp_pos++] = input[pos++];
+	temp[temp_pos] = '\0';
+	if (quote_char == '\'')
+		processed = process_single_quotes(temp);
+	else
+		processed = process_double_quotes(temp, envp);
+	if (processed)
+	{
+		ft_strlcpy(result + *result_pos, processed, ft_strlen(processed) + 1);
+		*result_pos += ft_strlen(processed);
+		free(processed);
+	}
+	return (pos);
+}
+
+/**
+ * Processes unquoted section in mixed content.
+ * Copies unquoted characters to result.
+ */
+int	copy_unquoted_section(const char *input, int start, char *result,
+		int *result_pos)
+{
+	int	i;
+
+	i = start;
+	while (input[i] && input[i] != '\'' && input[i] != '"')
+	{
+		result[(*result_pos)++] = input[i];
+		i++;
+	}
+	return (i);
 }

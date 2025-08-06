@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 22:41:40 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:20:56 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,12 @@ char	**get_path_dirs(char **env)
 
 void	exec_absolute_path(t_cmd_node *node, char **env)
 {
+	if (access(node->cmd[0], F_OK) != 0)
+		print_command_not_found(node->cmd[0]);
+	if (access(node->cmd[0], X_OK) != 0)
+		print_permission_denied(node->cmd[0]);
 	execve(node->cmd[0], node->cmd, env);
+	print_permission_denied(node->cmd[0]);
 }
 
 void	try_path_execution(t_cmd_node *node, char **env, char **paths)
@@ -61,11 +66,16 @@ void	try_path_execution(t_cmd_node *node, char **env, char **paths)
 	while (paths && paths[i])
 	{
 		cmd_path = join_path(paths[i], node->cmd[0]);
-		if (cmd_path)
+		if (cmd_path && access(cmd_path, F_OK) == 0)
 		{
-			execve(cmd_path, node->cmd, env);
+			if (access(cmd_path, X_OK) == 0)
+				execve(cmd_path, node->cmd, env);
 			free(cmd_path);
+			print_permission_denied(node->cmd[0]);
 		}
+		if (cmd_path)
+			free(cmd_path);
 		i++;
 	}
+	print_command_not_found(node->cmd[0]);
 }

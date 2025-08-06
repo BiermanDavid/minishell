@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_process.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 22:44:19 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:12:43 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	exec_external(t_cmd_node *node, char **env)
 	pid_t	pid;
 	int		status;
 
+	set_minimal_signals();
 	pid = fork();
 	if (pid == 0)
 	{
@@ -35,15 +36,16 @@ int	exec_external(t_cmd_node *node, char **env)
 		if (apply_redirections(node->files) == -1)
 			exit(1);
 		exec_command(node, env);
-		perror(node->cmd[0]);
 		exit(127);
 	}
 	else if (pid < 0)
 	{
+		initialize_shell_signals();
 		perror("fork");
 		return (1);
 	}
 	waitpid(pid, &status, 0);
+	initialize_shell_signals();
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);

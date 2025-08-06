@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+         #
+#    By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/14 04:04:18 by dgessner          #+#    #+#              #
-#    Updated: 2025/05/24 17:39:53 by dgessner         ###   ########.fr        #
+#    Updated: 2025/08/06 15:58:25 by dabierma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,20 +59,25 @@ BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	ar rc $(NAME) $(OBJS)
+	@ar rc $(NAME) $(OBJS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 bonus: $(OBJS) $(BONUS_OBJS)
-	ar rc $(NAME) $(OBJS) $(BONUS_OBJS)
+	@ar rc $(NAME) $(OBJS) $(BONUS_OBJS)
 
 clean:
-	rm -f $(OBJS) $(BONUS_OBJS)
+	@rm -f $(OBJS) $(BONUS_OBJS)
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
+
+all: $(TARGET) message
+
+message:
+	@echo "\033[32m Libft compilation completed... \033[0m"
 
 .PHONY: all clean fclean re bonus

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/04 22:05:24 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:34:42 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ void	setup_child_signals(void);
 void	ignore_rl_sigint_and_sigquit(void);
 void	ignore_backslash(int sig);
 void	handle_ctrl_c(int sig);
+void	handle_ctrl_c_minimal(int sig);
 
 /**
  * handle_inputs.c - manages response for input edge cases

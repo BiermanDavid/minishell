@@ -3,129 +3,130 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 03:39:27 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:40:30 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Closes unused pipe file descriptors for the current process.
+ * Counts commands in pipeline and creates pipes.
+ * Returns number of commands in pipeline.
  */
-static void	close_unused_pipes(t_pipe_info *pipe_info, int in_fd, int out_fd)
+int	setup_pipes_and_count(t_cmd_node *start, int pipes[][2])
 {
-	int	i;
+	t_cmd_node	*current;
+	int			cmd_count;
+	int			pipe_count;
 
-	i = 0;
-	while (i < pipe_info->total)
+	current = start;
+	cmd_count = 0;
+	pipe_count = 0;
+	while (current && current->cmd_type == CMD_PIPE)
 	{
-		if (pipe_info->pipes[i][0] != in_fd)
-			close(pipe_info->pipes[i][0]);
-		if (pipe_info->pipes[i][1] != out_fd)
-			close(pipe_info->pipes[i][1]);
+		pipe(pipes[pipe_count++]);
+		current = current->next;
+		cmd_count++;
+	}
+	cmd_count++;
+	return (cmd_count);
+}
+
+/**
+ * Executes all middle commands in pipeline.
+ * Handles commands between first and last.
+ */
+/**
+ * Executes all middle commands in pipeline.
+ * Handles commands between first and last.
+ */
+void	exec_middle_commands(t_cmd_node *start, pid_t *pids, int pipes[][2],
+		char ***envp)
+{
+	t_cmd_node	*current;
+	int			i;
+	int			cmd_count;
+	t_cmd_node	*temp;
+
+	current = start->next;
+	i = 1;
+	cmd_count = 0;
+	temp = start;
+	while (temp && temp->cmd_type == CMD_PIPE)
+	{
+		temp = temp->next;
+		cmd_count++;
+	}
+	cmd_count++;
+	while (i < cmd_count - 1)
+	{
+		pids[i] = exec_middle_cmd(current, pipes, i, envp);
+		current = current->next;
 		i++;
 	}
 }
 
 /**
- * Spawns a process for a single pipeline stage.
+ * Waits for all pipeline processes to complete.
+ * Sets global exit status from last command.
  */
-pid_t	spawn_stage(t_cmd_node *node, int fds[2],
-		t_pipe_info *pipe_info, char ***envp)
+void	wait_for_pipeline(pid_t *pids, int cmd_count)
 {
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == 0)
-	{
-		setup_child_signals();
-		dup2(fds[0], STDIN_FILENO);
-		dup2(fds[1], STDOUT_FILENO);
-		close_unused_pipes(pipe_info, fds[0], fds[1]);
-		if (apply_redirections(node->files) == -1)
-			exit(1);
-		if (is_builtin(node->cmd[0]))
-			exit(exec_builtin(node, envp));
-		exec_command(node, *envp);
-		perror(node->cmd[0]);
-		exit(127);
-	}
-	return (pid);
-}
-
-int	setup_pipeline(t_cmd_node *node, pid_t *pids,
-	t_pipe_info *pipe_info, char ***envp)
-{
+	int	status;
 	int	i;
-	int	in_fd;
-	int	fds[2];
 
 	i = 0;
-	while (node && node->cmd_type == CMD_PIPE)
+	while (i < cmd_count)
 	{
-		pipe(pipe_info->pipes[i]);
-		if (i == 0)
-			in_fd = STDIN_FILENO;
-		else
-			in_fd = pipe_info->pipes[i - 1][0];
-		pipe_info->total = i + 1;
-		fds[0] = in_fd;
-		fds[1] = pipe_info->pipes[i][1];
-		pids[i] = spawn_stage(node, fds, pipe_info, envp);
-		if (i > 0)
-			close(pipe_info->pipes[i - 1][0]);
-		close(pipe_info->pipes[i][1]);
-		node = node->next;
+		waitpid(pids[i], &status, 0);
 		i++;
-	}
-	return (i);
-}
-
-void	final_stage(t_cmd_node *node, pid_t *pids,
-	t_pipe_info *pipe_info, char ***envp)
-{
-	int	in_fd;
-	int	i;
-	int	fds[2];
-
-	i = pipe_info->total;
-	if (i == 0)
-		in_fd = STDIN_FILENO;
-	else
-		in_fd = pipe_info->pipes[i - 1][0];
-	pipe_info->total = i + 1;
-	fds[0] = in_fd;
-	fds[1] = STDOUT_FILENO;
-	pids[i] = spawn_stage(node, fds, pipe_info, envp);
-	if (i > 0)
-		close(pipe_info->pipes[i - 1][0]);
-}
-
-/**
- * Executes a pipeline of commands.
- */
-t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
-{
-	t_cmd_node	*node;
-	pid_t		pids[64];
-	int			status;
-	int			count;
-	t_pipe_info	pipe_info;
-
-	node = start;
-	count = setup_pipeline(start, pids, &pipe_info, envp);
-	final_stage(node, pids, &pipe_info, envp);
-	while (count >= 0)
-	{
-		waitpid(pids[count], &status, 0);
-		count--;
 	}
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
 	else
 		g_exit_status = 1;
-	return (node->next);
+}
+
+/**
+ * Helper function to execute pipeline processes.
+ * Splits exec_pipeline to comply with Norm variable limit.
+ */
+static t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
+		int cmd_count, int pipe_count, char ***envp)
+{
+	t_cmd_node	*current;
+	pid_t		pids[64];
+	int			pipes[64][2];
+
+	setup_pipes_and_count(start, pipes);
+	current = start;
+	pids[0] = exec_first_cmd(current, pipes, envp);
+	exec_middle_commands(start, pids, pipes, envp);
+	while (current->next)
+		current = current->next;
+	pids[cmd_count - 1] = exec_last_cmd(current, pipes, pipe_count, envp);
+	close_all_pipes(pipes, pipe_count);
+	wait_for_pipeline(pids, cmd_count);
+	return (current->next);
+}
+
+/**
+ * Executes a complete pipeline of commands.
+ * Creates pipes and manages all processes with minimal signal handling.
+ */
+t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
+{
+	int			cmd_count;
+	int			pipe_count;
+	t_cmd_node	*result;
+
+	set_minimal_signals();
+	cmd_count = setup_pipes_and_count(start, (int [][2]){});
+	pipe_count = cmd_count - 1;
+	result = execute_pipeline_processes(start, cmd_count, pipe_count, envp);
+	initialize_shell_signals();
+	return (result);
 }

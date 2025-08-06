@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/04 21:43:42 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:40:54 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ char		*join_path(const char *dir, const char *cmd);
 char		**get_path_dirs(char **env);
 void		exec_absolute_path(t_cmd_node *node, char **env);
 void		try_path_execution(t_cmd_node *node, char **env, char **paths);
+void		print_permission_denied(const char *cmd);
+void		print_command_not_found(const char *cmd);
 
 /* Builtin utilities */
 int			builtin_echo(char **args);
@@ -62,6 +64,15 @@ int			apply_redirections(t_file_list *files);
 pid_t		spawn_stage(t_cmd_node *node, int fds[2],
 				t_pipe_info *pipe_info, char ***envp);
 t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp);
+pid_t		exec_first_cmd(t_cmd_node *node, int pipes[][2], char ***envp);
+pid_t		exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i,
+				char ***envp);
+pid_t		exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
+				char ***envp);
+void		set_minimal_signals(void);
+void		restore_shell_signals(void);
+void		handle_ctrl_c_minimal(int sig);
+void		close_all_pipes(int pipes[][2], int pipe_count);
 
 /* Command validation functions */
 bool		validate_cat_args(char **args);

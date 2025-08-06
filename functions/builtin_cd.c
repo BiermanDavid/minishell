@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:15:06 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 22:39:47 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:29:24 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	builtin_cd(char **args, char ***envp)
 		return (1);
 	}
 	target = get_cd_target(args, *envp);
-	if (target == NULL && args[1] && ft_strncmp(args[1], "-", 2) == 0 
+	if (target == NULL && args[1] && ft_strncmp(args[1], "-", 2) == 0
 		&& ft_strlen(args[1]) == 1)
 		return (1);
 	if (change_directory(target) != 0)

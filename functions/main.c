@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/04 22:04:28 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:35:09 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void	cleanup_tokens(t_token **tokens, int token_count)
  */
 void	initialize_shell(void)
 {
-	printf("Welcome to minishell!\n");
 	initialize_shell_signals();
 	ignore_rl_sigint_and_sigquit();
 }

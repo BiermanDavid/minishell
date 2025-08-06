@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:03:29 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/06 22:25:50 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,13 @@ int	process_variable(const char *input, int input_pos,
 		}
 		return (input_pos + 1);
 	}
+	if (!input[input_pos] || (!ft_isalnum(input[input_pos])
+			&& input[input_pos] != '_'))
+	{
+		data->result[*(data->result_pos)] = '$';
+		(*(data->result_pos))++;
+		return (input_pos);
+	}
 	input_pos = extract_var_name(input, input_pos, var_name);
 	var_value = env_get(envp, var_name);
 	if (var_value)
@@ -59,6 +66,37 @@ int	process_variable(const char *input, int input_pos,
 				*(data->result_pos), var_value);
 	return (input_pos);
 }
+
+
+// /**
+//  * Processes a variable expansion in the input.
+//  * Handles $VAR expansion and updates positions.
+//  */
+// int	process_variable(const char *input, int input_pos,
+// 	t_exp_data *data, char **envp)
+// {
+// 	char	var_name[256];
+// 	char	*var_value;
+
+// 	input_pos++;
+// 	if (input[input_pos] == '?')
+// 	{
+// 		var_value = ft_itoa(g_exit_status);
+// 		if (var_value)
+// 		{
+// 			*(data->result_pos) = copy_var_value(data->result,
+// 					*(data->result_pos), var_value);
+// 			free(var_value);
+// 		}
+// 		return (input_pos + 1);
+// 	}
+// 	input_pos = extract_var_name(input, input_pos, var_name);
+// 	var_value = env_get(envp, var_name);
+// 	if (var_value)
+// 		*(data->result_pos) = copy_var_value(data->result,
+// 				*(data->result_pos), var_value);
+// 	return (input_pos);
+// }
 
 /**
  * Expands environment variables in a string.
@@ -93,12 +131,14 @@ char	*expand_variables(const char *input, char **envp)
 
 /**
  * Determines quote type and processes accordingly.
- * Routes to appropriate quote handler based on quote type.
+ * Routes to appropriate quote handler based on content type.
  */
 char	*process_quoted_string(const char *input, char **envp)
 {
 	if (!input || ft_strlen(input) == 0)
 		return (NULL);
+	if (has_mixed_quotes(input))
+		return (process_mixed_content(input, envp));
 	if (input[0] == '\'')
 		return (process_single_quotes(input));
 	else if (input[0] == '"')
