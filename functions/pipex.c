@@ -13,29 +13,38 @@
 #include "execute.h"
 
 /**
+ * Closes unused pipe file descriptors for the current process.
+ */
+static void	close_unused_pipes(t_pipe_info *pipe_info, int in_fd, int out_fd)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipe_info->total)
+	{
+		if (pipe_info->pipes[i][0] != in_fd)
+			close(pipe_info->pipes[i][0]);
+		if (pipe_info->pipes[i][1] != out_fd)
+			close(pipe_info->pipes[i][1]);
+		i++;
+	}
+}
+
+/**
  * Spawns a process for a single pipeline stage.
  */
-pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd,
-		int pipes[64][2], int total, char ***envp)
+pid_t	spawn_stage(t_cmd_node *node, int fds[2],
+		t_pipe_info *pipe_info, char ***envp)
 {
 	pid_t	pid;
-	int		i;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		setup_child_signals();
-		dup2(in_fd, STDIN_FILENO);
-		dup2(out_fd, STDOUT_FILENO);
-		i = 0;
-		while (i < total)
-		{
-			if (pipes[i][0] != in_fd)
-				close(pipes[i][0]);
-			if (pipes[i][1] != out_fd)
-				close(pipes[i][1]);
-			i++;
-		}
+		dup2(fds[0], STDIN_FILENO);
+		dup2(fds[1], STDOUT_FILENO);
+		close_unused_pipes(pipe_info, fds[0], fds[1]);
 		if (apply_redirections(node->files) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))
@@ -48,24 +57,27 @@ pid_t	spawn_stage(t_cmd_node *node, int in_fd, int out_fd,
 }
 
 int	setup_pipeline(t_cmd_node *node, pid_t *pids,
-	int pipes[64][2], char ***envp)
+	t_pipe_info *pipe_info, char ***envp)
 {
 	int	i;
 	int	in_fd;
+	int	fds[2];
 
 	i = 0;
 	while (node && node->cmd_type == CMD_PIPE)
 	{
-		pipe(pipes[i]);
+		pipe(pipe_info->pipes[i]);
 		if (i == 0)
 			in_fd = STDIN_FILENO;
 		else
-			in_fd = pipes[i - 1][0];
-		pids[i] = spawn_stage(node, in_fd,
-				pipes[i][1], pipes, i + 1, envp);
+			in_fd = pipe_info->pipes[i - 1][0];
+		pipe_info->total = i + 1;
+		fds[0] = in_fd;
+		fds[1] = pipe_info->pipes[i][1];
+		pids[i] = spawn_stage(node, fds, pipe_info, envp);
 		if (i > 0)
-			close(pipes[i - 1][0]);
-		close(pipes[i][1]);
+			close(pipe_info->pipes[i - 1][0]);
+		close(pipe_info->pipes[i][1]);
 		node = node->next;
 		i++;
 	}
@@ -73,27 +85,23 @@ int	setup_pipeline(t_cmd_node *node, pid_t *pids,
 }
 
 void	final_stage(t_cmd_node *node, pid_t *pids,
-	int pipes[64][2], int i, char ***envp)
+	t_pipe_info *pipe_info, char ***envp)
 {
 	int	in_fd;
+	int	i;
+	int	fds[2];
 
+	i = pipe_info->total;
 	if (i == 0)
 		in_fd = STDIN_FILENO;
 	else
-		in_fd = pipes[i - 1][0];
-	pids[i] = spawn_stage(node, in_fd, STDOUT_FILENO,
-			pipes, i + 1, envp);
+		in_fd = pipe_info->pipes[i - 1][0];
+	pipe_info->total = i + 1;
+	fds[0] = in_fd;
+	fds[1] = STDOUT_FILENO;
+	pids[i] = spawn_stage(node, fds, pipe_info, envp);
 	if (i > 0)
-		close(pipes[i - 1][0]);
-}
-
-void	wait_for_pipeline(pid_t *pids, int count, int *status)
-{
-	while (count >= 0)
-	{
-		waitpid(pids[count], status, 0);
-		count--;
-	}
+		close(pipe_info->pipes[i - 1][0]);
 }
 
 /**
@@ -103,14 +111,18 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 {
 	t_cmd_node	*node;
 	pid_t		pids[64];
-	int			pipes[64][2];
 	int			status;
 	int			count;
+	t_pipe_info	pipe_info;
 
 	node = start;
-	count = setup_pipeline(start, pids, pipes, envp);
-	final_stage(node, pids, pipes, count, envp);
-	wait_for_pipeline(pids, count, &status);
+	count = setup_pipeline(start, pids, &pipe_info, envp);
+	final_stage(node, pids, &pipe_info, envp);
+	while (count >= 0)
+	{
+		waitpid(pids[count], &status, 0);
+		count--;
+	}
 	if (WIFEXITED(status))
 		g_exit_status = WEXITSTATUS(status);
 	else

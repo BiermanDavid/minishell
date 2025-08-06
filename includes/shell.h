@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:15:58 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:05:24 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,12 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <ctype.h>
+# include <signal.h>
 # include "../libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
 
-extern int g_exit_status;
-
-typedef struct s_file_node	t_file_node;
-typedef struct s_cmd_node	t_cmd_node;
-typedef struct s_file_list	t_file_list;
-typedef struct s_cmd_list	t_cmd_list;
+extern int		g_exit_status;
 
 /**
  * Token types produced by the lexer for different shell elements.
@@ -75,6 +73,12 @@ typedef enum t_cmd_type
 	CMD_SEQUENCE,
 	CMD_BACKGROUND
 }	t_cmd_type;
+
+typedef struct s_pipe_info
+{
+	int	pipes[64][2];
+	int	total;
+}	t_pipe_info;
 
 typedef struct t_token
 {
@@ -135,6 +139,13 @@ void	handle_ctrl_c(int sig);
 char	*read_input(void);
 bool	is_empty_line(const char *input);
 bool	handle_exit_command(char *input);
-void    process_input(char *input, char ***envp);
+void	process_input(char *input, char ***envp);
+
+/**
+ * error_management.c - standardized error handling
+ */
+void	*safe_malloc(size_t size);
+char	*safe_strdup(const char *s);
+void	cleanup_on_error(void **ptrs, int count);
 
 #endif

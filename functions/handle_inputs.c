@@ -6,14 +6,12 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:33:11 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:03:43 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /**
  * Processes parsed command list.
@@ -42,14 +40,10 @@ void	process_input(char *input, char ***envp)
 	if (tokens && token_count > 0)
 	{
 		cmd_list = parse_command(tokens, token_count, *envp);
-#ifdef DEBUG_MOD
-		print_parsed_commands(cmd_list);
-#endif
 		process_command_list(cmd_list, envp);
 		cleanup_tokens(tokens, token_count);
 	}
 }
-
 
 /**
  * Reads a line of input from the user.

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:47:44 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 17:40:44 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:35:03 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*read_heredoc(char *buffer, size_t buffer_size)
 	if (!fgets(buffer, buffer_size, stdin))
 		return (NULL);
 	line = buffer;
-	line_len = strlen(line);
+	line_len = ft_strlen(line);
 	if (line_len > 0 && line[line_len - 1] == '\n')
 	{
 		line[line_len - 1] = '\0';
@@ -43,7 +43,7 @@ char	*append_heredoc(char *data, char *line, size_t *len, size_t *size)
 {
 	size_t	line_len;
 
-	line_len = strlen(line);
+	line_len = ft_strlen(line);
 	line[line_len] = '\n';
 	line_len++;
 	if (*len + line_len + 1 > *size)
@@ -53,7 +53,7 @@ char	*append_heredoc(char *data, char *line, size_t *len, size_t *size)
 		if (!data)
 			return (NULL);
 	}
-	strcpy(data + *len, line);
+	ft_strlcpy(data + *len, line, *size - *len);
 	*len += line_len;
 	return (data);
 }
@@ -81,7 +81,8 @@ char	*collect_heredoc_content(const char *delimiter)
 		line = read_heredoc(buffer, sizeof(buffer));
 		if (!line)
 			break ;
-		if (strcmp(line, delimiter) == 0)
+		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0 
+			&& ft_strlen(line) == ft_strlen(delimiter))
 			break ;
 		data = append_heredoc(data, line, &len, &size);
 		if (!data)

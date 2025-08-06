@@ -30,20 +30,19 @@ t_token	*create_token(t_token_type type, const char *value, int position)
 {
 	t_token	*token;
 
-	token = malloc(sizeof(t_token));
+	token = safe_malloc(sizeof(t_token));
 	if (!token)
 		return (NULL);
 	token->type = type;
 	token->position = position;
 	if (value)
 	{
-		token->value = malloc(strlen(value) + 1);
+		token->value = safe_strdup(value);
 		if (!token->value)
 		{
 			free(token);
 			return (NULL);
 		}
-		strcpy(token->value, value);
 	}
 	else
 		token->value = NULL;
@@ -87,7 +86,7 @@ t_token	**tokenize_input(const char *input, int *token_count)
 
 	if (!input || !token_count)
 		return (NULL);
-	tokens = malloc(64 * sizeof(t_token *));
+	tokens = safe_malloc(64 * sizeof(t_token *));
 	if (!tokens)
 		return (NULL);
 	pos = 0;

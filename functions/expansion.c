@@ -21,7 +21,7 @@ int	extract_var_name(const char *input, int input_pos, char *var_name)
 	int	var_pos;
 
 	var_pos = 0;
-	while (input[input_pos] && (isalnum(input[input_pos])
+	while (input[input_pos] && (ft_isalnum(input[input_pos])
 			|| input[input_pos] == '_'))
 	{
 		var_name[var_pos++] = input[input_pos++];
@@ -35,7 +35,7 @@ int	extract_var_name(const char *input, int input_pos, char *var_name)
  * Handles $VAR expansion and updates positions.
  */
 int	process_variable(const char *input, int input_pos,
-	char *result, int *result_pos, char **envp)
+	t_exp_data *data, char **envp)
 {
 	char	var_name[256];
 	char	*var_value;
@@ -46,7 +46,8 @@ int	process_variable(const char *input, int input_pos,
 		var_value = ft_itoa(g_exit_status);
 		if (var_value)
 		{
-			*result_pos = copy_var_value(result, *result_pos, var_value);
+			*(data->result_pos) = copy_var_value(data->result,
+					*(data->result_pos), var_value);
 			free(var_value);
 		}
 		return (input_pos + 1);
@@ -54,7 +55,8 @@ int	process_variable(const char *input, int input_pos,
 	input_pos = extract_var_name(input, input_pos, var_name);
 	var_value = env_get(envp, var_name);
 	if (var_value)
-		*result_pos = copy_var_value(result, *result_pos, var_value);
+		*(data->result_pos) = copy_var_value(data->result,
+				*(data->result_pos), var_value);
 	return (input_pos);
 }
 
@@ -64,9 +66,10 @@ int	process_variable(const char *input, int input_pos,
  */
 char	*expand_variables(const char *input, char **envp)
 {
-	char	*result;
-	int		result_pos;
-	int		input_pos;
+	char		*result;
+	int			result_pos;
+	int			input_pos;
+	t_exp_data	data;
 
 	if (!input)
 		return (NULL);
@@ -75,10 +78,12 @@ char	*expand_variables(const char *input, char **envp)
 		return (NULL);
 	result_pos = 0;
 	input_pos = 0;
+	data.result = result;
+	data.result_pos = &result_pos;
 	while (input[input_pos])
 	{
 		if (input[input_pos] == '$')
-			input_pos = process_variable(input, input_pos, result, &result_pos, envp);
+			input_pos = process_variable(input, input_pos, &data, envp);
 		else
 			result[result_pos++] = input[input_pos++];
 	}
@@ -92,7 +97,7 @@ char	*expand_variables(const char *input, char **envp)
  */
 char	*process_quoted_string(const char *input, char **envp)
 {
-	if (!input || strlen(input) == 0)
+	if (!input || ft_strlen(input) == 0)
 		return (NULL);
 	if (input[0] == '\'')
 		return (process_single_quotes(input));

@@ -20,16 +20,15 @@ t_file_node	*create_file_node(char *filename, int redir_type)
 {
 	t_file_node	*node;
 
-	node = malloc(sizeof(t_file_node));
+	node = safe_malloc(sizeof(t_file_node));
 	if (!node)
 		return (NULL);
-	node->filename = malloc(strlen(filename) + 1);
+	node->filename = safe_strdup(filename);
 	if (!node->filename)
 	{
 		free(node);
 		return (NULL);
 	}
-	strcpy(node->filename, filename);
 	node->redir_type = redir_type;
 	node->next = NULL;
 	return (node);
@@ -43,7 +42,7 @@ t_file_list	*create_file_list(void)
 {
 	t_file_list	*list;
 
-	list = malloc(sizeof(t_file_list));
+	list = safe_malloc(sizeof(t_file_list));
 	if (!list)
 		return (NULL);
 	list->head = NULL;
@@ -81,12 +80,17 @@ t_cmd_node	*create_cmd_node(int cmd_type)
 {
 	t_cmd_node	*node;
 
-	node = malloc(sizeof(t_cmd_node));
+	node = safe_malloc(sizeof(t_cmd_node));
 	if (!node)
 		return (NULL);
 	node->cmd_type = cmd_type;
 	node->cmd = NULL;
 	node->files = create_file_list();
+	if (!node->files)
+	{
+		free(node);
+		return (NULL);
+	}
 	node->next = NULL;
 	return (node);
 }
@@ -99,7 +103,7 @@ t_cmd_list	*create_cmd_list(void)
 {
 	t_cmd_list	*list;
 
-	list = malloc(sizeof(t_cmd_list));
+	list = safe_malloc(sizeof(t_cmd_list));
 	if (!list)
 		return (NULL);
 	list->head = NULL;

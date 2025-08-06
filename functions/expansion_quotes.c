@@ -22,8 +22,8 @@ int	copy_var_value(char *result, int result_pos, const char *var_value)
 
 	if (!var_value)
 		return (result_pos);
-	value_len = strlen(var_value);
-	strcpy(result + result_pos, var_value);
+	value_len = ft_strlen(var_value);
+	ft_strlcpy(result + result_pos, var_value, value_len + 1);
 	return (result_pos + value_len);
 }
 
@@ -36,12 +36,12 @@ void	remove_quotes(char *result, const char *input, int len)
 	if (len >= 2 && ((input[0] == '\'' && input[len - 1] == '\'')
 			|| (input[0] == '"' && input[len - 1] == '"')))
 	{
-		strncpy(result, input + 1, len - 2);
+		ft_strlcpy(result, input + 1, len - 1);
 		result[len - 2] = '\0';
 	}
 	else
 	{
-		strcpy(result, input);
+		ft_strlcpy(result, input, len + 1);
 	}
 }
 
@@ -56,7 +56,7 @@ char	*process_single_quotes(const char *input)
 
 	if (!input)
 		return (NULL);
-	len = strlen(input);
+	len = ft_strlen(input);
 	result = malloc(len + 1);
 	if (!result)
 		return (NULL);
@@ -76,7 +76,7 @@ char	*process_double_quotes(const char *input, char **envp)
 
 	if (!input)
 		return (NULL);
-	len = strlen(input);
+	len = ft_strlen(input);
 	temp = malloc(len + 1);
 	if (!temp)
 		return (NULL);

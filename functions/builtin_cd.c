@@ -1,0 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_cd.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/03 10:15:06 by dgessner          #+#    #+#             */
+/*   Updated: 2025/08/04 22:39:47 by dgessner         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "execute.h"
+
+static char	*get_cd_target(char **args, char **envp)
+{
+	char	*target;
+
+	if (!args[1])
+		return (env_get(envp, "HOME"));
+	if (ft_strncmp(args[1], "-", 2) == 0 && ft_strlen(args[1]) == 1)
+	{
+		target = env_get(envp, "OLDPWD");
+		if (!target)
+		{
+			write(STDOUT_FILENO, "cd: OLDPWD not set\n", 19);
+			return (NULL);
+		}
+		write(STDOUT_FILENO, target, ft_strlen(target));
+		write(STDOUT_FILENO, "\n", 1);
+		return (target);
+	}
+	return (args[1]);
+}
+
+static int	change_directory(char *target)
+{
+	if (!target || chdir(target) != 0)
+	{
+		perror("cd");
+		return (1);
+	}
+	return (0);
+}
+
+int	builtin_cd(char **args, char ***envp)
+{
+	char	cwd[PATH_MAX];
+	char	*target;
+
+	if (!getcwd(cwd, sizeof(cwd)))
+	{
+		perror("cd: getcwd failed");
+		return (1);
+	}
+	target = get_cd_target(args, *envp);
+	if (target == NULL && args[1] && ft_strncmp(args[1], "-", 2) == 0 
+		&& ft_strlen(args[1]) == 1)
+		return (1);
+	if (change_directory(target) != 0)
+		return (1);
+	env_set(envp, "OLDPWD", cwd);
+	if (getcwd(cwd, sizeof(cwd)))
+		env_set(envp, "PWD", cwd);
+	return (0);
+}

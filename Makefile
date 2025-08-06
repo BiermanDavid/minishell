@@ -49,8 +49,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re message
-
-DEBUG_FLAGS = -DDEBUG_MOD
-
-debug: CFLAGS += $(DEBUG_FLAGS)
-debug: re

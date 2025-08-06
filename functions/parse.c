@@ -63,26 +63,26 @@ int	skip_separators(t_token **tokens, int i, int token_count)
  * Processes a single command from tokens.
  * Creates command node and parses arguments and redirections.
  */
-int	process_single_command(t_token **tokens, int i, int token_count,
+int	process_single_command(t_token_data *data, int i,
 	t_cmd_list *cmd_list, char **env)
 {
 	t_cmd_node	*current_cmd;
 	int			word_count;
 
-	if (tokens[i]->type != TOKEN_WORD)
+	if (data->tokens[i]->type != TOKEN_WORD)
 		return (i + 1);
-	word_count = count_words_until_operator(tokens, i, token_count);
+	word_count = count_words_until_operator(data->tokens, i, data->token_count);
 	current_cmd = create_cmd_node(CMD_SIMPLE);
 	if (!current_cmd)
-		return (token_count);
-	current_cmd->cmd = extract_command_args(tokens, i, word_count, env);
+		return (data->token_count);
+	current_cmd->cmd = extract_command_args(data->tokens, i, word_count, env);
 	i += word_count;
-	i = parse_redir(tokens, i, token_count, current_cmd);
-	set_command_type(current_cmd, tokens, i, token_count);
+	i = parse_redir(data->tokens, i, data->token_count, current_cmd);
+	set_command_type(current_cmd, data->tokens, i, data->token_count);
 	add_cmd_to_list(cmd_list, current_cmd);
-	if (i < token_count && (tokens[i]->type == TOKEN_PIPE
-			|| tokens[i]->type == TOKEN_BACKGROUND
-			|| tokens[i]->type == TOKEN_SEMICOLON))
+	if (i < data->token_count && (data->tokens[i]->type == TOKEN_PIPE
+			|| data->tokens[i]->type == TOKEN_BACKGROUND
+			|| data->tokens[i]->type == TOKEN_SEMICOLON))
 		i++;
 	return (i);
 }
@@ -93,21 +93,24 @@ int	process_single_command(t_token **tokens, int i, int token_count,
  */
 t_cmd_list	*parse_command(t_token **tokens, int token_count, char **env)
 {
-	t_cmd_list	*cmd_list;
-	int			i;
+	t_cmd_list		*cmd_list;
+	int				i;
+	t_token_data	data;
 
 	if (!tokens || token_count == 0)
 		return (NULL);
 	cmd_list = create_cmd_list();
 	if (!cmd_list)
 		return (NULL);
+	data.tokens = tokens;
+	data.token_count = token_count;
 	i = 0;
 	while (i < token_count && tokens[i]->type != TOKEN_EOF)
 	{
 		i = skip_separators(tokens, i, token_count);
 		if (i >= token_count)
 			break ;
-		i = process_single_command(tokens, i, token_count, cmd_list, env);
+		i = process_single_command(&data, i, cmd_list, env);
 	}
 	return (cmd_list);
 }

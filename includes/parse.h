@@ -15,6 +15,18 @@
 # include "shell.h"
 # include "execute.h"
 
+typedef struct s_exp_data
+{
+	char	*result;
+	int		*result_pos;
+}	t_exp_data;
+
+typedef struct s_token_data
+{
+	t_token	**tokens;
+	int		token_count;
+}	t_token_data;
+
 /**
  * Token creation and basic lexical analysis functions.
  */
@@ -33,7 +45,8 @@ t_cmd_list	*parse_command(t_token **token, int j, char **env);
 void		add_cmd_to_list(t_cmd_list *list, t_cmd_node *node);
 char		**allocate_args_array(int word_count);
 char		*process_token_arg(t_token *token, char **envp);
-char		**extract_command_args(t_token **token, int start, int word_count, char **envp);
+char		**extract_command_args(t_token **token, int start,
+				int word_count, char **envp);
 
 /**
  * Variable expansion and quote processing for shell input.

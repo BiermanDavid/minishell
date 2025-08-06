@@ -6,14 +6,12 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 02:18:19 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:04:28 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /**
  * Removes the newline character from input string.
@@ -23,7 +21,7 @@ void	strip_newline(char *input)
 {
 	int	len;
 
-	len = strlen(input);
+	len = ft_strlen(input);
 	if (len > 0 && input[len - 1] == '\n')
 		input[len - 1] = '\0';
 }

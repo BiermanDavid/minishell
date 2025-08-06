@@ -41,7 +41,7 @@ char	**allocate_args_array(int word_count)
 {
 	char	**args;
 
-	args = malloc((word_count + 1) * sizeof(char *));
+	args = safe_malloc((word_count + 1) * sizeof(char *));
 	if (!args)
 		return (NULL);
 	return (args);
@@ -59,9 +59,7 @@ char	*process_token_arg(t_token *token, char **envp)
 	expanded = expand_token(token->value, envp);
 	if (expanded)
 		return (expanded);
-	result = malloc(strlen(token->value) + 1);
-	if (result)
-		strcpy(result, token->value);
+	result = safe_strdup(token->value);
 	return (result);
 }
 
@@ -69,7 +67,8 @@ char	*process_token_arg(t_token *token, char **envp)
  * Extracts command arguments from tokens.
  * Creates the args array for a command node.
  */
-char	**extract_command_args(t_token **tokens, int start, int word_count, char **envp)
+char	**extract_command_args(t_token **tokens, int start,
+		int word_count, char **envp)
 {
 	char	**args;
 	int		i;
@@ -81,6 +80,13 @@ char	**extract_command_args(t_token **tokens, int start, int word_count, char **
 	while (i < word_count)
 	{
 		args[i] = process_token_arg(tokens[start + i], envp);
+		if (!args[i])
+		{
+			while (--i >= 0)
+				free(args[i]);
+			free(args);
+			return (NULL);
+		}
 		i++;
 	}
 	args[word_count] = NULL;

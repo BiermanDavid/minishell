@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 21:12:35 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 00:21:19 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:50:24 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,20 @@ int	builtin_echo(char **args)
 
 	newline = 1;
 	i = 1;
-	if (args[1] && strcmp(args[1], "-n") == 0)
+	if (args[1] && ft_strncmp(args[1], "-n", 3) == 0 && ft_strlen(args[1]) == 2)
 	{
 		newline = 0;
 		i = 2;
 	}
 	while (args[i])
 	{
-		printf("%s", args[i]);
+		write(STDOUT_FILENO, args[i], ft_strlen(args[i]));
 		if (args[i + 1])
-			printf(" ");
+			write(STDOUT_FILENO, " ", 1);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		write(STDOUT_FILENO, "\n", 1);
 	return (0);
 }
 
@@ -41,7 +41,10 @@ int	builtin_pwd(void)
 	char	cwd[1024];
 
 	if (getcwd(cwd, sizeof(cwd)))
-		printf("%s\n", cwd);
+	{
+		write(STDOUT_FILENO, cwd, ft_strlen(cwd));
+		write(STDOUT_FILENO, "\n", 1);
+	}
 	return (0);
 }
 

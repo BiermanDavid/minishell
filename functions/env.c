@@ -6,14 +6,14 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:25:13 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/03 03:27:08 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:51:19 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Sucht nach einem Environment-Wert anhand des Keys.
+ * Searches for an environment value by key.
  */
 char	*env_get(char **env, const char *key)
 {
@@ -21,10 +21,10 @@ char	*env_get(char **env, const char *key)
 	size_t	len;
 
 	i = 0;
-	len = strlen(key);
+	len = ft_strlen(key);
 	while (env && env[i])
 	{
-		if (strncmp(env[i], key, len) == 0 && env[i][len] == '=')
+		if (ft_strncmp(env[i], key, len) == 0 && env[i][len] == '=')
 			return (env[i] + len + 1);
 		i++;
 	}
@@ -32,51 +32,7 @@ char	*env_get(char **env, const char *key)
 }
 
 /**
- * Setzt einen Environment-Wert (neu oder ersetzt bestehenden).
- */
-int	env_set(char ***envp, const char *key, const char *value)
-{
-	int		i;
-	size_t	len;
-	char	*new_entry;
-	char	**env;
-	char	**new_env;
-
-	i = 0;
-	env = *envp;
-	len = strlen(key);
-	new_entry = malloc(len + strlen(value) + 2);
-	if (!new_entry)
-		return (1);
-	sprintf(new_entry, "%s=%s", key, value);
-	while (env && env[i])
-	{
-		if (strncmp(env[i], key, len) == 0 && env[i][len] == '=')
-		{
-			free(env[i]);
-			env[i] = new_entry;
-			return (0);
-		}
-		i++;
-	}
-	if (!env)
-		new_env = malloc(sizeof(char *) * 2);
-	else
-		new_env = realloc(env, sizeof(char *) * (i + 2));
-
-	if (!new_env)
-	{
-		free(new_entry);
-		return (1);
-	}
-	new_env[i] = new_entry;
-	new_env[i + 1] = NULL;
-	*envp = new_env;
-	return (0);
-}
-
-/**
- * Entfernt einen Environment-Wert anhand des Keys.
+ * Removes an environment value by key.
  */
 int	env_unset(char ***envp, const char *key)
 {
@@ -87,10 +43,10 @@ int	env_unset(char ***envp, const char *key)
 
 	i = 0;
 	env = *envp;
-	len = strlen(key);
+	len = ft_strlen(key);
 	while (env && env[i])
 	{
-		if (strncmp(env[i], key, len) == 0 && env[i][len] == '=')
+		if (ft_strncmp(env[i], key, len) == 0 && env[i][len] == '=')
 		{
 			free(env[i]);
 			j = i;
@@ -107,7 +63,7 @@ int	env_unset(char ***envp, const char *key)
 }
 
 /**
- * Gibt alle aktuellen Environment-Variablen aus.
+ * Prints all current environment variables.
  */
 void	env_print(char **env)
 {
@@ -116,7 +72,8 @@ void	env_print(char **env)
 	i = 0;
 	while (env && env[i])
 	{
-		printf("%s\n", env[i]);
+		write(STDOUT_FILENO, env[i], ft_strlen(env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
 }

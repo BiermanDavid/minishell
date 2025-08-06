@@ -6,14 +6,11 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:48 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/02 23:02:27 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/04 22:05:16 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
-#include <signal.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 
 /**
  * Voids the signal, returns new line as it should fort ctrl+c.
