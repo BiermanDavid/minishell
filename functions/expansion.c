@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 22:25:50 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/07 02:08:18 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,37 +66,6 @@ int	process_variable(const char *input, int input_pos,
 				*(data->result_pos), var_value);
 	return (input_pos);
 }
-
-
-// /**
-//  * Processes a variable expansion in the input.
-//  * Handles $VAR expansion and updates positions.
-//  */
-// int	process_variable(const char *input, int input_pos,
-// 	t_exp_data *data, char **envp)
-// {
-// 	char	var_name[256];
-// 	char	*var_value;
-
-// 	input_pos++;
-// 	if (input[input_pos] == '?')
-// 	{
-// 		var_value = ft_itoa(g_exit_status);
-// 		if (var_value)
-// 		{
-// 			*(data->result_pos) = copy_var_value(data->result,
-// 					*(data->result_pos), var_value);
-// 			free(var_value);
-// 		}
-// 		return (input_pos + 1);
-// 	}
-// 	input_pos = extract_var_name(input, input_pos, var_name);
-// 	var_value = env_get(envp, var_name);
-// 	if (var_value)
-// 		*(data->result_pos) = copy_var_value(data->result,
-// 				*(data->result_pos), var_value);
-// 	return (input_pos);
-// }
 
 /**
  * Expands environment variables in a string.

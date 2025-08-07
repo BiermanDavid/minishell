@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/06 18:40:30 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/07 02:09:59 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,6 @@ int	setup_pipes_and_count(t_cmd_node *start, int pipes[][2])
 	return (cmd_count);
 }
 
-/**
- * Executes all middle commands in pipeline.
- * Handles commands between first and last.
- */
 /**
  * Executes all middle commands in pipeline.
  * Handles commands between first and last.

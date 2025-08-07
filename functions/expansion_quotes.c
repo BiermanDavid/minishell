@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:35:33 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 22:28:09 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/07 02:11:35 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ char	*process_double_quotes(const char *input, char **envp)
 	free(temp);
 	return (result);
 }
+
 /**
  * Checks if token contains mixed quoted and unquoted content.
  * Returns true if token needs special mixed processing.
