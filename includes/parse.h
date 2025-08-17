@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 22:41:53 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 19:19:21 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,11 @@ void		destroy_token(t_token *token);
  */
 t_cmd_list	*parse_command(t_token **token, int j, char **env);
 
-int		count_all_command_words(t_token **tokens, int start, int token_count);
-char	**extract_all_command_args(t_token **tokens, int start, int end, char **envp);
-int		find_command_end(t_token **tokens, int start, int token_count);
+int			count_all_command_words(t_token **tokens, int start,
+				int token_count);
+char		**extract_all_command_args(t_token **tokens, int start, int end,
+				char **envp);
+int			find_command_end(t_token **tokens, int start, int token_count);
 
 /**
  * parser_cmd.c - Command parsing and command list creation functions.
@@ -60,6 +62,17 @@ char		*process_single_quotes(const char *input);
 char		*process_double_quotes(const char *input, char **envp);
 char		*process_quoted_string(const char *input, char **envp);
 char		*expand_token(const char *token_value, char **envp);
+
+/**
+ * expansion_utils.c - Helper functions for variable expansion.
+ */
+int			extract_var_name(const char *input, int input_pos, char *var_name);
+int			process_special_variable(const char *input, int input_pos,
+				t_exp_data *data);
+int			process_escape_sequence(const char *input, int input_pos,
+				char *result, int *result_pos);
+int			process_variable(const char *input, int input_pos,
+				t_exp_data *data, char **envp);
 
 /**
  * make_parser_nodes.c -
@@ -108,6 +121,14 @@ char		*read_heredoc_line(char *buffer, size_t buffer_size);
 char		*append_heredoc(char *data, char *line, size_t *len, size_t *size);
 
 /**
+ * heredoc_utils.c - Helper functions for heredoc processing.
+ */
+char		*read_heredoc(char *buffer, size_t buffer_size);
+char		*realloc_heredoc_buffer(char *data, size_t *size,
+				size_t needed_size, size_t current_len);
+char		*init_heredoc_buffer(size_t *size, size_t *len);
+
+/**
  * free_errors.c
  */
 void		free_file_list(t_file_list *list);
@@ -121,11 +142,15 @@ int			copy_var_value(char *result, int result_pos, const char *var_value);
 void		remove_quotes(char *result, const char *input, int len);
 char		*process_single_quotes(const char *input);
 
-int		copy_unquoted_section(const char *input, int start, char *result, int *result_pos);
-int		has_mixed_quotes(const char *input);
-char	*process_mixed_content(const char *input, char **envp);
-int		process_quoted_part(const char *input, int pos, char *result, int *result_pos, char **envp);
-int	process_single_command(t_token_data *data, int i, t_cmd_list *cmd_list, char **env);
-
+int			copy_unquoted_section(const char *input, int start, char *result,
+				int *result_pos);
+int			copy_unquoted_section_expanded(const char *input, int start,
+				char *result, int *result_pos, char **envp);
+int			has_mixed_quotes(const char *input);
+char		*process_mixed_content(const char *input, char **envp);
+int			process_quoted_part(const char *input, int pos, char *result,
+				int *result_pos, char **envp);
+int			process_single_command(t_token_data *data, int i,
+				t_cmd_list *cmd_list, char **env);
 
 #endif

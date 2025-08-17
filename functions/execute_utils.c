@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/06 18:20:56 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:16:25 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ char	**get_path_dirs(char **env)
 void	exec_absolute_path(t_cmd_node *node, char **env)
 {
 	if (access(node->cmd[0], F_OK) != 0)
-		print_command_not_found(node->cmd[0]);
+		exit(print_command_not_found(node->cmd[0]));
 	if (access(node->cmd[0], X_OK) != 0)
-		print_permission_denied(node->cmd[0]);
+		exit(print_permission_denied(node->cmd[0]));
 	execve(node->cmd[0], node->cmd, env);
-	print_permission_denied(node->cmd[0]);
+	exit(print_permission_denied(node->cmd[0]));
 }
 
 void	try_path_execution(t_cmd_node *node, char **env, char **paths)
@@ -69,13 +69,17 @@ void	try_path_execution(t_cmd_node *node, char **env, char **paths)
 		if (cmd_path && access(cmd_path, F_OK) == 0)
 		{
 			if (access(cmd_path, X_OK) == 0)
+			{
 				execve(cmd_path, node->cmd, env);
+				free(cmd_path);
+				exit(print_permission_denied(node->cmd[0]));
+			}
 			free(cmd_path);
-			print_permission_denied(node->cmd[0]);
+			exit(print_permission_denied(node->cmd[0]));
 		}
 		if (cmd_path)
 			free(cmd_path);
 		i++;
 	}
-	print_command_not_found(node->cmd[0]);
+	exit(print_command_not_found(node->cmd[0]));
 }

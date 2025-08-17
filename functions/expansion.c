@@ -3,32 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/07 02:08:18 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:16:57 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
-
-/**
- * Extracts variable name from input string.
- * Reads alphanumeric characters and underscores.
- */
-int	extract_var_name(const char *input, int input_pos, char *var_name)
-{
-	int	var_pos;
-
-	var_pos = 0;
-	while (input[input_pos] && (ft_isalnum(input[input_pos])
-			|| input[input_pos] == '_'))
-	{
-		var_name[var_pos++] = input[input_pos++];
-	}
-	var_name[var_pos] = '\0';
-	return (input_pos);
-}
 
 /**
  * Processes a variable expansion in the input.
@@ -39,32 +21,39 @@ int	process_variable(const char *input, int input_pos,
 {
 	char	var_name[256];
 	char	*var_value;
+	int		special_result;
 
 	input_pos++;
-	if (input[input_pos] == '?')
-	{
-		var_value = ft_itoa(g_exit_status);
-		if (var_value)
-		{
-			*(data->result_pos) = copy_var_value(data->result,
-					*(data->result_pos), var_value);
-			free(var_value);
-		}
-		return (input_pos + 1);
-	}
-	if (!input[input_pos] || (!ft_isalnum(input[input_pos])
-			&& input[input_pos] != '_'))
-	{
-		data->result[*(data->result_pos)] = '$';
-		(*(data->result_pos))++;
-		return (input_pos);
-	}
+	special_result = process_special_variable(input, input_pos, data);
+	if (special_result != -1)
+		return (special_result);
 	input_pos = extract_var_name(input, input_pos, var_name);
 	var_value = env_get(envp, var_name);
 	if (var_value)
 		*(data->result_pos) = copy_var_value(data->result,
 				*(data->result_pos), var_value);
 	return (input_pos);
+}
+
+/**
+ * Initializes expansion data structure for variable processing.
+ * Sets up result buffer and position tracking.
+ */
+static char	*init_expansion(const char *input, t_exp_data *data,
+	int *result_pos, int *input_pos)
+{
+	char	*result;
+
+	if (!input)
+		return (NULL);
+	result = ft_calloc(1024, sizeof(char));
+	if (!result)
+		return (NULL);
+	*result_pos = 0;
+	*input_pos = 0;
+	data->result = result;
+	data->result_pos = result_pos;
+	return (result);
 }
 
 /**
@@ -77,19 +66,18 @@ char	*expand_variables(const char *input, char **envp)
 	int			result_pos;
 	int			input_pos;
 	t_exp_data	data;
+	int			escape_result;
 
-	if (!input)
-		return (NULL);
-	result = ft_calloc(1024, sizeof(char));
+	result = init_expansion(input, &data, &result_pos, &input_pos);
 	if (!result)
 		return (NULL);
-	result_pos = 0;
-	input_pos = 0;
-	data.result = result;
-	data.result_pos = &result_pos;
 	while (input[input_pos])
 	{
-		if (input[input_pos] == '$')
+		escape_result = process_escape_sequence(input, input_pos,
+				result, &result_pos);
+		if (escape_result != -1)
+			input_pos = escape_result;
+		else if (input[input_pos] == '$')
 			input_pos = process_variable(input, input_pos, &data, envp);
 		else
 			result[result_pos++] = input[input_pos++];

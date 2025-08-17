@@ -88,6 +88,47 @@ int	process_single_command(t_token_data *data, int i,
 }
 
 /**
+ * Checks for syntax errors in token stream.
+ * Returns 1 if syntax error found, 0 if valid.
+ */
+static int	check_syntax_errors(t_token **tokens, int token_count)
+{
+	int		i;
+	extern int	g_exit_status;
+
+	i = 0;
+	while (i < token_count)
+	{
+		if (tokens[i]->type == TOKEN_PIPE)
+		{
+			if (i == 0 || i == token_count - 1)
+			{
+				printf("minishell: syntax error near unexpected token `|'\n");
+				g_exit_status = 2;
+				return (1);
+			}
+			if (tokens[i + 1]->type == TOKEN_PIPE)
+			{
+				printf("minishell: syntax error near unexpected token `|'\n");
+				g_exit_status = 2;
+				return (1);
+			}
+		}
+		if (tokens[i]->type >= TOKEN_REDIRECT_IN && tokens[i]->type <= TOKEN_HEREDOC)
+		{
+			if (i == token_count - 1 || tokens[i + 1]->type != TOKEN_WORD)
+			{
+				printf("minishell: syntax error near unexpected token `newline'\n");
+				g_exit_status = 2;
+				return (1);
+			}
+		}
+		i++;
+	}
+	return (0);
+}
+
+/**
  * Main parser - creates clear pipe chains for execution.
  * CMD_PIPE means "pipes to next command", CMD_PIPE_END means "last in chain".
  */
@@ -98,6 +139,8 @@ t_cmd_list	*parse_command(t_token **tokens, int token_count, char **env)
 	t_token_data	data;
 
 	if (!tokens || token_count == 0)
+		return (NULL);
+	if (check_syntax_errors(tokens, token_count))
 		return (NULL);
 	cmd_list = create_cmd_list();
 	if (!cmd_list)

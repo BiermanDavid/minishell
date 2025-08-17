@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:13 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 14:42:53 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:41:12 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,22 @@ bool	validate_command_args(char **args)
  * Prints command not found error.
  * Provides helpful feedback for invalid commands.
  */
-void	print_command_not_found(const char *cmd)
+int	print_command_not_found(const char *cmd)
 {
 	if (!cmd)
-		return ;
-	printf("minishell: command not found: %s\n", cmd);
-	exit(127);
+		return (127);
+	printf("minishell: %s: command not found\n", cmd);
+	return (127);
 }
 
 /**
  * Prints permission denied error.
  * Used when command exists but cannot be executed.
  */
-void	print_permission_denied(const char *cmd)
+int	print_permission_denied(const char *cmd)
 {
 	if (!cmd)
-		return ;
-	printf("minishell: permission denied: %s\n", cmd);
-	exit(126);
+		return (126);
+	printf("minishell: %s: permission denied\n", cmd);
+	return (126);
 }

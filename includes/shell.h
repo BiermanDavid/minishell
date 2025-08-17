@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 18:34:42 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:48:20 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include "../libft/libft.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <dirent.h>
 
 extern int		g_exit_status;
 

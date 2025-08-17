@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 09:56:10 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 21:51:08 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:40:45 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ static char	*create_env_entry(const char *key, const char *value)
 	new_entry = malloc(len + ft_strlen(value) + 2);
 	if (!new_entry)
 		return (NULL);
-	sprintf(new_entry, "%s=%s", key, value);
+	ft_strlcpy(new_entry, key, len + ft_strlen(value) + 2);
+	ft_strlcat(new_entry, "=", len + ft_strlen(value) + 2);
+	ft_strlcat(new_entry, value, len + ft_strlen(value) + 2);
 	return (new_entry);
 }
 
@@ -51,15 +53,21 @@ static int	replace_existing_var(char **env, const char *key, char *new_entry)
 static char	**add_new_var(char ***envp, char *new_entry, int count)
 {
 	char	**new_env;
+	int		i;
 
-	if (!*envp)
-		new_env = malloc(sizeof(char *) * 2);
-	else
-		new_env = realloc(*envp, sizeof(char *) * (count + 2));
+	new_env = malloc(sizeof(char *) * (count + 2));
 	if (!new_env)
 		return (NULL);
+	i = 0;
+	while (i < count && *envp)
+	{
+		new_env[i] = (*envp)[i];
+		i++;
+	}
 	new_env[count] = new_entry;
 	new_env[count + 1] = NULL;
+	if (*envp)
+		free(*envp);
 	*envp = new_env;
 	return (new_env);
 }

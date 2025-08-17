@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 21:52:00 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:16:18 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,47 +61,45 @@ int	redir_append(t_file_node *f)
 int	redir_heredoc(t_file_node *f)
 {
 	int		pfd[2];
-	char	*heredoc_content;
+	char	*content;
 
 	if (pipe(pfd) == -1)
 		return (-1);
-	heredoc_content = collect_heredoc_content(f->filename);
-	if (!heredoc_content)
+	content = collect_heredoc_content(f->filename);
+	if (content)
 	{
-		close(pfd[0]);
-		close(pfd[1]);
-		return (-1);
+		write(pfd[1], content, ft_strlen(content));
+		free(content);
 	}
-	write(pfd[1], heredoc_content, ft_strlen(heredoc_content));
 	close(pfd[1]);
 	dup2(pfd[0], STDIN_FILENO);
 	close(pfd[0]);
-	free(heredoc_content);
 	return (0);
 }
 
-int	apply_redirections(t_file_list *files)
+/**
+ * Applies all redirections for a command with variable expansion.
+ * Returns 0 on success, -1 on failure.
+ */
+int	apply_redirections(t_file_list *files, char **envp)
 {
 	t_file_node	*f;
+	char		*expanded_filename;
+	char		*original_filename;
 
-	if (files)
-		f = files->head;
-	else
-		f = NULL;
-	if (!files)
+	if (!files || !files->head)
 		return (0);
-	if (!files->head)
-		return (0);
+	f = files->head;
 	while (f)
 	{
-		if (f->redir_type == REDIR_IN && redir_in(f) == -1)
+		expanded_filename = prepare_redirection_filename(f, envp,
+				&original_filename);
+		if (execute_redirection(f) == -1)
+		{
+			restore_filename(f, expanded_filename, original_filename);
 			return (-1);
-		else if (f->redir_type == REDIR_OUT && redir_out(f) == -1)
-			return (-1);
-		else if (f->redir_type == REDIR_APPEND && redir_append(f) == -1)
-			return (-1);
-		else if (f->redir_type == REDIR_HEREDOC && redir_heredoc(f) == -1)
-			return (-1);
+		}
+		restore_filename(f, expanded_filename, original_filename);
 		f = f->next;
 	}
 	return (0);

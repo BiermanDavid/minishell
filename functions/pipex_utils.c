@@ -33,7 +33,7 @@ pid_t	exec_first_cmd(t_cmd_node *node, int pipes[][2], char ***envp)
 			close(pipes[j][1]);
 			j++;
 		}
-		if (apply_redirections(node->files) == -1)
+		if (apply_redirections(node->files, *envp) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))
 			exit(exec_builtin(node, envp));
@@ -65,7 +65,7 @@ pid_t	exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 			close(pipes[j][1]);
 			j++;
 		}
-		if (apply_redirections(node->files) == -1)
+		if (apply_redirections(node->files, *envp) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))
 			exit(exec_builtin(node, envp));
@@ -99,7 +99,7 @@ pid_t	exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i, char ***envp)
 			close(pipes[j][1]);
 			j++;
 		}
-		if (apply_redirections(node->files) == -1)
+		if (apply_redirections(node->files, *envp) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))
 			exit(exec_builtin(node, envp));

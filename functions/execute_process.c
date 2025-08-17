@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_process.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/06 18:12:43 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:16:10 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	exec_external(t_cmd_node *node, char **env)
 	if (pid == 0)
 	{
 		setup_child_signals();
-		if (apply_redirections(node->files) == -1)
+		if (apply_redirections(node->files, env) == -1)
 			exit(1);
 		exec_command(node, env);
 		exit(127);
@@ -59,7 +59,7 @@ int	exec_builtin_redir(t_cmd_node *node, char ***envp)
 
 	saved_in = dup(STDIN_FILENO);
 	saved_out = dup(STDOUT_FILENO);
-	if (apply_redirections(node->files) == -1)
+	if (apply_redirections(node->files, *envp) == -1)
 	{
 		dup2(saved_in, STDIN_FILENO);
 		dup2(saved_out, STDOUT_FILENO);

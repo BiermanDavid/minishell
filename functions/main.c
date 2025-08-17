@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 18:35:09 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 20:44:29 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,5 @@ int	main(int argc, char **argv, char **envp)
 		free(input);
 	}
 	free_env(new_envp);
-	return (0);
+	return (g_exit_status);
 }

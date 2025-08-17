@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:43:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/03 03:34:06 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:00:07 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,9 @@ char	**allocate_args_array(int word_count)
  */
 char	*process_token_arg(t_token *token, char **envp)
 {
-	char	*expanded;
 	char	*result;
 
-	expanded = expand_token(token->value, envp);
-	if (expanded)
-		return (expanded);
+	(void)envp;
 	result = safe_strdup(token->value);
 	return (result);
 }

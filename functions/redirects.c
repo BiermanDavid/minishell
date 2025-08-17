@@ -36,22 +36,13 @@ int	get_redir_type(t_token_type token_type)
 int	heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd)
 {
 	t_file_node	*file_node;
-	char		*heredoc_content;
-	char		*content_to_use;
 
 	i++;
 	if (i >= j || token[i]->type != TOKEN_WORD)
 		return (i);
-	heredoc_content = collect_heredoc_content(token[i]->value);
-	if (heredoc_content)
-		content_to_use = heredoc_content;
-	else
-		content_to_use = "";
-	file_node = create_file_node(content_to_use, REDIR_HEREDOC);
+	file_node = create_file_node(token[i]->value, REDIR_HEREDOC);
 	if (file_node)
 		add_file_to_list(cmd->files, file_node);
-	if (heredoc_content)
-		free(heredoc_content);
 	return (i + 1);
 }
 

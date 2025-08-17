@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:35:33 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/07 02:11:35 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:16:41 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,8 @@ char	*process_mixed_content(const char *input, char **envp)
 			input_pos = process_quoted_part(input, input_pos, result,
 					&result_pos, envp);
 		else
-			input_pos = copy_unquoted_section(input, input_pos, result,
-					&result_pos);
+			input_pos = copy_unquoted_section_expanded(input, input_pos, result,
+					&result_pos, envp);
 	}
 	result[result_pos] = '\0';
 	return (result);
@@ -192,6 +192,43 @@ int	copy_unquoted_section(const char *input, int start, char *result,
 	{
 		result[(*result_pos)++] = input[i];
 		i++;
+	}
+	return (i);
+}
+
+/**
+ * Processes unquoted section with variable expansion.
+ * Handles mixed content expansion correctly.
+ */
+int	copy_unquoted_section_expanded(const char *input, int start, char *result,
+		int *result_pos, char **envp)
+{
+	int		i;
+	char	temp[1024];
+	char	*expanded;
+	int		temp_pos;
+
+	i = start;
+	temp_pos = 0;
+	while (input[i] && input[i] != '\'' && input[i] != '"')
+	{
+		temp[temp_pos++] = input[i];
+		i++;
+	}
+	temp[temp_pos] = '\0';
+	if (temp_pos > 0)
+	{
+		if (temp_pos == 1 && temp[0] == '$')
+		{
+			return (i);
+		}
+		expanded = expand_variables(temp, envp);
+		if (expanded)
+		{
+			ft_strlcpy(result + *result_pos, expanded, ft_strlen(expanded) + 1);
+			*result_pos += ft_strlen(expanded);
+			free(expanded);
+		}
 	}
 	return (i);
 }
