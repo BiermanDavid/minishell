@@ -12,6 +12,10 @@
 
 #include "execute.h"
 
+/**
+ * Counts the number of commands in a pipeline.
+ * Returns total command count including the final non-pipe command.
+ */
 int	count_pipeline_commands(t_cmd_node *start)
 {
 	t_cmd_node	*current;
@@ -28,6 +32,10 @@ int	count_pipeline_commands(t_cmd_node *start)
 	return (cmd_count);
 }
 
+/**
+ * Creates all pipe file descriptors for the pipeline.
+ * Sets up read and write ends for inter-process communication.
+ */
 void	setup_pipes(int (*pipes)[2], int pipe_count)
 {
 	int	i;
@@ -40,6 +48,11 @@ void	setup_pipes(int (*pipes)[2], int pipe_count)
 	}
 }
 
+/**
+ * Executes a complete pipeline of commands.
+ * Manages signal handling and delegates to process execution.
+ * Returns pointer to next command node after pipeline.
+ */
 t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 {
 	int			cmd_count;

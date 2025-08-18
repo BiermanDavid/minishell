@@ -12,6 +12,11 @@
 
 #include "execute.h"
 
+/**
+ * Determines the target directory for the cd command based on arguments.
+ * Returns HOME directory if no argument provided, OLDPWD if "-" is given,
+ * or the specified directory path.
+ */
 static char	*get_cd_target(char **args, char **envp)
 {
 	char	*target;
@@ -33,6 +38,10 @@ static char	*get_cd_target(char **args, char **envp)
 	return (args[1]);
 }
 
+/**
+ * Changes the current working directory to the specified target.
+ * Returns 0 on success, 1 on failure.
+ */
 static int	change_directory(char *target)
 {
 	if (!target || chdir(target) != 0)
@@ -43,6 +52,11 @@ static int	change_directory(char *target)
 	return (0);
 }
 
+/**
+ * Implements the cd builtin command functionality.
+ * Changes directory and updates PWD and OLDPWD environment variables.
+ * Returns 0 on success, 1 on failure.
+ */
 int	builtin_cd(char **args, char ***envp)
 {
 	char	cwd[PATH_MAX];

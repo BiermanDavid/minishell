@@ -12,6 +12,11 @@
 
 #include "execute.h"
 
+/**
+ * Implements the echo builtin command functionality.
+ * Prints arguments to stdout with optional newline suppression (-n flag).
+ * Returns 0 on success.
+ */
 int	builtin_echo(char **args)
 {
 	int	i;
@@ -36,6 +41,11 @@ int	builtin_echo(char **args)
 	return (0);
 }
 
+/**
+ * Implements the pwd builtin command functionality.
+ * Prints the current working directory to stdout.
+ * Returns 0 on success.
+ */
 int	builtin_pwd(void)
 {
 	char	cwd[1024];
@@ -48,6 +58,11 @@ int	builtin_pwd(void)
 	return (0);
 }
 
+/**
+ * Implements the exit builtin command functionality.
+ * Terminates the shell process with exit code 0.
+ * Returns 0 (though this is never reached due to exit).
+ */
 int	builtin_exit(char **args)
 {
 	(void)args;

@@ -13,6 +13,11 @@
 #include "execute.h"
 #include "parse.h"
 
+/**
+ * Handles input redirection (<).
+ * Opens file for reading and redirects to stdin.
+ * Returns 0 on success, -1 on failure.
+ */
 int	redir_in(t_file_node *f)
 {
 	int	fd;
@@ -28,6 +33,11 @@ int	redir_in(t_file_node *f)
 	return (0);
 }
 
+/**
+ * Handles output redirection (>).
+ * Opens file for writing (truncates) and redirects to stdout.
+ * Returns 0 on success, -1 on failure.
+ */
 int	redir_out(t_file_node *f)
 {
 	int	fd;
@@ -43,6 +53,11 @@ int	redir_out(t_file_node *f)
 	return (0);
 }
 
+/**
+ * Handles append redirection (>>).
+ * Opens file for appending and redirects to stdout.
+ * Returns 0 on success, -1 on failure.
+ */
 int	redir_append(t_file_node *f)
 {
 	int	fd;
@@ -58,6 +73,11 @@ int	redir_append(t_file_node *f)
 	return (0);
 }
 
+/**
+ * Handles heredoc redirection (<<).
+ * Creates pipe with heredoc content and redirects to stdin.
+ * Returns 0 on success, -1 on failure.
+ */
 int	redir_heredoc(t_file_node *f)
 {
 	int		pfd[2];

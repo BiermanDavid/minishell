@@ -12,6 +12,11 @@
 
 #include "execute.h"
 
+/**
+ * Handles export command when the argument contains a value assignment.
+ * Validates identifier and sets the environment variable.
+ * Returns 0 on success, 1 on failure.
+ */
 static int	handle_export_with_value(char *arg, char *eq, char ***envp)
 {
 	int			result;
@@ -30,6 +35,11 @@ static int	handle_export_with_value(char *arg, char *eq, char ***envp)
 	return (result);
 }
 
+/**
+ * Processes a single argument for the export command.
+ * Determines if it's a value assignment or declaration only.
+ * Returns 0 on success, 1 on failure.
+ */
 static int	handle_export_argument(char *arg, char ***envp)
 {
 	char		*eq;
@@ -47,6 +57,11 @@ static int	handle_export_argument(char *arg, char ***envp)
 	return (0);
 }
 
+/**
+ * Implements the export builtin command functionality.
+ * Exports variables to environment or prints all exported variables.
+ * Returns 0 on success.
+ */
 int	builtin_export(char **args, char ***envp)
 {
 	int	i;
@@ -65,6 +80,11 @@ int	builtin_export(char **args, char ***envp)
 	return (0);
 }
 
+/**
+ * Implements the unset builtin command functionality.
+ * Removes specified environment variables.
+ * Returns 0 on success.
+ */
 int	builtin_unset(char **args, char ***envp)
 {
 	int	i;
@@ -78,6 +98,11 @@ int	builtin_unset(char **args, char ***envp)
 	return (0);
 }
 
+/**
+ * Implements the env builtin command functionality.
+ * Prints all environment variables to stdout.
+ * Returns 0 on success.
+ */
 int	builtin_env(char **env)
 {
 	env_print(env);

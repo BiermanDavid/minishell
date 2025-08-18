@@ -6,14 +6,15 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 09:56:10 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/17 20:40:45 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 14:51:32 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Sets an environment value (new or replaces existing).
+ * Creates a new environment entry string in format "key=value".
+ * Returns allocated string or NULL on failure.
  */
 static char	*create_env_entry(const char *key, const char *value)
 {
@@ -30,6 +31,10 @@ static char	*create_env_entry(const char *key, const char *value)
 	return (new_entry);
 }
 
+/**
+ * Replaces existing environment variable with new entry.
+ * Returns 1 if variable was found and replaced, 0 otherwise.
+ */
 static int	replace_existing_var(char **env, const char *key, char *new_entry)
 {
 	int		i;
@@ -50,6 +55,10 @@ static int	replace_existing_var(char **env, const char *key, char *new_entry)
 	return (0);
 }
 
+/**
+ * Adds a new variable to the environment array.
+ * Expands the array and places new entry at the end.
+ */
 static char	**add_new_var(char ***envp, char *new_entry, int count)
 {
 	char	**new_env;
@@ -72,6 +81,11 @@ static char	**add_new_var(char ***envp, char *new_entry, int count)
 	return (new_env);
 }
 
+/**
+ * Sets an environment variable to the specified value.
+ * Creates new entry or replaces existing one.
+ * Returns 0 on success, 1 on failure.
+ */
 int	env_set(char ***envp, const char *key, const char *value)
 {
 	char	*new_entry;

@@ -12,6 +12,10 @@
 
 #include "execute.h"
 
+/**
+ * Creates a deep copy of the environment array.
+ * Returns a new environment array with duplicated strings.
+ */
 char	**duplicate_env(char **envp)
 {
 	int		i;
@@ -33,6 +37,10 @@ char	**duplicate_env(char **envp)
 	return (new_env);
 }
 
+/**
+ * Frees all memory allocated for an environment array.
+ * Frees each string and the array itself.
+ */
 void	free_env(char **env)
 {
 	int	i;
@@ -46,6 +54,10 @@ void	free_env(char **env)
 	free(env);
 }
 
+/**
+ * Checks if a string is a valid environment variable identifier.
+ * Must start with letter or underscore, contain only alphanumeric chars and underscores.
+ */
 int	is_valid_identifier(const char *str)
 {
 	int	i;
@@ -62,6 +74,10 @@ int	is_valid_identifier(const char *str)
 	return (1);
 }
 
+/**
+ * Checks if a string is a valid variable assignment (var=value).
+ * Validates the identifier part before the equals sign.
+ */
 int	is_assignment(const char *str)
 {
 	int		i;

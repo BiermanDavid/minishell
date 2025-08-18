@@ -6,13 +6,14 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:46:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/17 21:16:06 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 14:53:58 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 #include "parse.h"
 
+// WILDCARD FILE
 /**
  * Rebuilds command array by replacing one argument with multiple arguments.
  * Used when wildcard expansion produces multiple matches.

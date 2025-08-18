@@ -12,6 +12,10 @@
 
 #include "execute.h"
 
+/**
+ * Checks if a command is a shell builtin.
+ * Returns 1 if command is builtin, 0 otherwise.
+ */
 int	is_builtin(const char *cmd)
 {
 	if (!cmd)
@@ -25,6 +29,11 @@ int	is_builtin(const char *cmd)
 		|| (ft_strncmp(cmd, "unset", 6) == 0 && ft_strlen(cmd) == 5));
 }
 
+/**
+ * Executes a builtin command based on the command name.
+ * Routes to appropriate builtin function implementation.
+ * Returns the exit status of the builtin command.
+ */
 int	exec_builtin(t_cmd_node *node, char ***envp)
 {
 	if (ft_strncmp(node->cmd[0], "echo", 5) == 0

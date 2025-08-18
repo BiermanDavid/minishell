@@ -28,6 +28,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <dirent.h>
+# include <sys/stat.h>
 
 extern int		g_exit_status;
 

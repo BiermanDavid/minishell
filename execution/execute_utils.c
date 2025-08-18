@@ -12,6 +12,10 @@
 
 #include "execute.h"
 
+/**
+ * Frees a NULL-terminated array of strings.
+ * Safely handles NULL input.
+ */
 void	free_split(char **arr)
 {
 	int	i;
@@ -24,6 +28,10 @@ void	free_split(char **arr)
 	free(arr);
 }
 
+/**
+ * Joins directory path and command name with '/' separator.
+ * Returns allocated string or NULL on failure.
+ */
 char	*join_path(const char *dir, const char *cmd)
 {
 	char	*tmp;
@@ -37,6 +45,10 @@ char	*join_path(const char *dir, const char *cmd)
 	return (path);
 }
 
+/**
+ * Extracts PATH directories from environment.
+ * Returns array of directory paths split by ':' or NULL if PATH not found.
+ */
 char	**get_path_dirs(char **env)
 {
 	char	*path_env;
@@ -47,16 +59,31 @@ char	**get_path_dirs(char **env)
 	return (NULL);
 }
 
+/**
+ * Executes command with absolute or relative path.
+ * Checks file existence and permissions before execution.
+ */
 void	exec_absolute_path(t_cmd_node *node, char **env)
 {
+	struct stat	statbuf;
+
 	if (access(node->cmd[0], F_OK) != 0)
 		exit(print_command_not_found(node->cmd[0]));
+	if (stat(node->cmd[0], &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	{
+		printf("minishell: %s: is a directory\n", node->cmd[0]);
+		exit(126);
+	}
 	if (access(node->cmd[0], X_OK) != 0)
 		exit(print_permission_denied(node->cmd[0]));
 	execve(node->cmd[0], node->cmd, env);
 	exit(print_permission_denied(node->cmd[0]));
 }
 
+/**
+ * Searches PATH directories for executable command.
+ * Tries each directory until command is found and executed.
+ */
 void	try_path_execution(t_cmd_node *node, char **env, char **paths)
 {
 	char	*cmd_path;
