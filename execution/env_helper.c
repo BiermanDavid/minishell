@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 03:20:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 21:51:01 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:56:30 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ void	free_env(char **env)
 
 /**
  * Checks if a string is a valid environment variable identifier.
- * Must start with letter or underscore, contain only alphanumeric chars and underscores.
+ * Must start with letter or underscore, contain only alphanumeric 
+ * chars and underscores.
  */
 int	is_valid_identifier(const char *str)
 {
