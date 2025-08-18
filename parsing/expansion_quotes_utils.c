@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 13:48:19 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 17:50:56 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 18:01:32 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,24 +43,6 @@ void	remove_quotes(char *result, const char *input, int len)
 	{
 		ft_strlcpy(result, input, len + 1);
 	}
-}
-
-/**
- * Processes unquoted section in mixed content.
- * Copies unquoted characters to result.
- */
-int	copy_unquoted_section(const char *input, int start, char *result,
-		int *result_pos)
-{
-	int	i;
-
-	i = start;
-	while (input[i] && input[i] != '\'' && input[i] != '"')
-	{
-		result[(*result_pos)++] = input[i];
-		i++;
-	}
-	return (i);
 }
 
 /**

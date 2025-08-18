@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:58:18 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:51:29 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 18:05:11 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Frees a file list and all its nodes.
  * Cleans up memory for redirections.
  */
-void	free_file_list(t_file_list *list)
+static void	free_file_list(t_file_list *list)
 {
 	t_file_node	*current;
 	t_file_node	*next;
@@ -38,7 +38,7 @@ void	free_file_list(t_file_list *list)
  * Frees command arguments array.
  * Helper function for free_cmd_list.
  */
-void	free_cmd_args(char **cmd)
+static void	free_cmd_args(char **cmd)
 {
 	int	i;
 

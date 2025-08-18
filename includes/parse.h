@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:57:44 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 18:06:16 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,6 @@ int			process_special_variable(const char *input, int input_pos,
 				t_exp_data *data);
 int			process_escape_sequence(const char *input, int input_pos,
 				char *result, int *result_pos);
-int			process_variable(const char *input, int input_pos,
-				t_exp_data *data, char **envp);
 
 /**
  * make_parser_nodes.c -
@@ -97,7 +95,6 @@ t_cmd_list	*create_cmd_list(void);
 /**
  * Lexer.c
  */
-void		skip_whitespace(const char *input, int *pos);
 
 /**
  * lexer_word.c
@@ -143,9 +140,8 @@ char		*init_heredoc_buffer(size_t *size, size_t *len);
 /**
  * free_errors.c
  */
-void		free_file_list(t_file_list *list);
-void		free_cmd_args(char **cmd);
 void		free_cmd_list(t_cmd_list *list);
+void		skip_whitespace(const char *input, int *pos);
 
 /**
  * expansion_quotes.c
@@ -170,9 +166,6 @@ char		*read_from_pipe(void);
  * parse_syntax.c
  */
 int			check_syntax_errors(t_token **tokens, int token_count);
-
-int			copy_unquoted_section(const char *input, int start, char *result,
-				int *result_pos);
 int			process_quoted_part(const char *input, int pos,
 				t_quote_context *ctx);
 int			copy_unquoted_section_expanded(const char *input, int start,

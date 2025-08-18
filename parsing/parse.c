@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 22:52:43 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:59:41 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	process_single_command(t_token_data *data, int i,
 }
 
 /**
- * Main parser - creates clear pipe chains for execution.
+ * Main parser creates pipe chains for execution
  * CMD_PIPE means "pipes to next command", CMD_PIPE_END means "last in chain".
  */
 t_cmd_list	*parse_command(t_token **tokens, int token_count, char **env)

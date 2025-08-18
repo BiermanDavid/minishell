@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_inputs_reader.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:21:57 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 14:02:00 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 18:10:23 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,11 @@ char	*read_from_tty(void)
 /**
  * Reads a single line from pipe input.
  * Handles non-interactive input sources.
+ * buffer of 4096 is the range for bash
  */
 static char	*read_pipe_line(void)
 {
-	char	buffer[1024];
+	char	buffer[4096];
 	int		bytes_read;
 	int		i;
 	char	*input;

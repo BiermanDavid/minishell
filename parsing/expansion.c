@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:51:20 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 18:04:12 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Processes a variable expansion in the input.
  * Handles $VAR expansion and updates positions.
  */
-int	process_variable(const char *input, int input_pos,
+static int	process_variable(const char *input, int input_pos,
 	t_exp_data *data, char **envp)
 {
 	char	var_name[256];
