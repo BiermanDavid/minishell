@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/17 19:19:21 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:22:37 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,16 @@
 # define PARSE_H
 # include "shell.h"
 # include "execute.h"
+
+/**
+ * typedef only to reduce arguments per norm (expansion quotes)
+ */
+typedef struct s_quote_context
+{
+	char	*result;
+	int		*result_pos;
+	char	**envp;
+}	t_quote_context;
 
 typedef struct s_exp_data
 {
@@ -161,12 +171,12 @@ int			check_syntax_errors(t_token **tokens, int token_count);
 
 int			copy_unquoted_section(const char *input, int start, char *result,
 				int *result_pos);
+int			process_quoted_part(const char *input, int pos,
+				t_quote_context *ctx);
 int			copy_unquoted_section_expanded(const char *input, int start,
-				char *result, int *result_pos, char **envp);
+				t_quote_context *ctx);
 int			has_mixed_quotes(const char *input);
 char		*process_mixed_content(const char *input, char **envp);
-int			process_quoted_part(const char *input, int pos, char *result,
-				int *result_pos, char **envp);
 int			process_single_command(t_token_data *data, int i,
 				t_cmd_list *cmd_list, char **env);
 

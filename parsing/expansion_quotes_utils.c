@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_quotes_utils.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 13:48:19 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 13:49:56 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:39:53 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ static int	handle_single_dollar(const char *temp, int temp_pos)
  * Processes unquoted section with variable expansion.
  * Handles mixed content expansion correctly.
  */
-int	copy_unquoted_section_expanded(const char *input, int start, char *result,
-		int *result_pos, char **envp)
+int	copy_unquoted_section_expanded(const char *input, int start,
+		t_quote_context *ctx)
 {
 	int		i;
 	char	temp[1024];
@@ -96,11 +96,12 @@ int	copy_unquoted_section_expanded(const char *input, int start, char *result,
 	temp[temp_pos] = '\0';
 	if (temp_pos > 0 && !handle_single_dollar(temp, temp_pos))
 	{
-		expanded = expand_variables(temp, envp);
+		expanded = expand_variables(temp, ctx->envp);
 		if (expanded)
 		{
-			ft_strlcpy(result + *result_pos, expanded, ft_strlen(expanded) + 1);
-			*result_pos += ft_strlen(expanded);
+			ft_strlcpy(ctx->result + *(ctx->result_pos),
+				expanded, ft_strlen(expanded) + 1);
+			*(ctx->result_pos) += ft_strlen(expanded);
 			free(expanded);
 		}
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_quotes_mixed.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 13:48:48 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 13:49:59 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 15:39:35 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ int	has_mixed_quotes(const char *input)
  * Processes quoted section in mixed content.
  * Handles single or double quoted sections appropriately.
  */
-int	process_quoted_part(const char *input, int pos, char *result,
-		int *result_pos, char **envp)
+int	process_quoted_part(const char *input, int pos, t_quote_context *ctx)
 {
 	char	quote_char;
 	char	temp[1024];
@@ -66,11 +65,12 @@ int	process_quoted_part(const char *input, int pos, char *result,
 	if (quote_char == '\'')
 		processed = process_single_quotes(temp);
 	else
-		processed = process_double_quotes(temp, envp);
+		processed = process_double_quotes(temp, ctx->envp);
 	if (processed)
 	{
-		ft_strlcpy(result + *result_pos, processed, ft_strlen(processed) + 1);
-		*result_pos += ft_strlen(processed);
+		ft_strlcpy(ctx->result + *(ctx->result_pos),
+			processed, ft_strlen(processed) + 1);
+		*(ctx->result_pos) += ft_strlen(processed);
 		free(processed);
 	}
 	return (pos);
@@ -82,23 +82,26 @@ int	process_quoted_part(const char *input, int pos, char *result,
  */
 char	*process_mixed_content(const char *input, char **envp)
 {
-	char	*result;
-	int		input_pos;
-	int		result_pos;
+	char			*result;
+	int				input_pos;
+	int				result_pos;
+	t_quote_context	ctx;
 
+	(void)envp;
 	result = ft_calloc(1024, sizeof(char));
 	if (!result)
 		return (NULL);
 	input_pos = 0;
 	result_pos = 0;
+	ctx.result = result;
+	ctx.result_pos = &result_pos;
+	ctx.envp = envp;
 	while (input[input_pos])
 	{
 		if (input[input_pos] == '\'' || input[input_pos] == '"')
-			input_pos = process_quoted_part(input, input_pos, result,
-					&result_pos, envp);
+			input_pos = process_quoted_part(input, input_pos, &ctx);
 		else
-			input_pos = copy_unquoted_section_expanded(input, input_pos,
-					result, &result_pos, envp);
+			input_pos = copy_unquoted_section_expanded(input, input_pos, &ctx);
 	}
 	result[result_pos] = '\0';
 	return (result);
