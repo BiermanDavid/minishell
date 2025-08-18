@@ -6,21 +6,11 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:35 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 18:51:46 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:52:06 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
-
-/**
- * Skips whitespace characters in the input string.
- * Advances position until non-whitespace character is found.
- */
-void	skip_whitespace(const char *input, int *pos)
-{
-	while (input[*pos] == ' ' || input[*pos] == '\t')
-		(*pos)++;
-}
 
 /**
  * Creates a token with the specified type, value, and position.
@@ -74,45 +64,54 @@ int	process_single_token(const char *input, int pos, t_token **tokens,
 	return (pos);
 }
 
+static t_token	**ensure_capacity(t_token **tokens, int count, int *buffer)
+{
+	t_token	**new_tokens;
+
+	if (count < *buffer - 1)
+		return (tokens);
+	*buffer *= 2;
+	new_tokens = safe_realloc(tokens, *buffer * sizeof(t_token *));
+	return (new_tokens);
+}
+
+static t_token	**init_tokens(int *buffer)
+{
+	*buffer = 16;
+	return (safe_malloc(*buffer * sizeof(t_token *)));
+}
+
 /**
  * Simple tokenizer that handles basic shell input.
- * Recognizes words, pipes, background, and redirection operators.
+ * Recognizes words, pipes, background, and redirection 
+ * increases in size buffer based on length of readline arg
  */
+
 t_token	**tokenize_input(const char *input, int *token_count)
 {
 	t_token	**tokens;
 	int		pos;
 	int		count;
+	int		buffer;
 
 	if (!input || !token_count)
 		return (NULL);
-	tokens = safe_malloc(64 * sizeof(t_token *));
+	tokens = init_tokens(&buffer);
 	if (!tokens)
 		return (NULL);
 	pos = 0;
 	count = 0;
-	while (input[pos] != '\0' && count < 63)
+	while (input[pos] != '\0')
 	{
 		skip_whitespace(input, &pos);
 		if (input[pos] == '\0')
 			break ;
+		tokens = ensure_capacity(tokens, count, &buffer);
+		if (!tokens)
+			return (NULL);
 		pos = process_single_token(input, pos, tokens, &count);
 	}
 	tokens[count] = create_token(TOKEN_EOF, NULL, pos);
-	count++;
-	*token_count = count;
+	*token_count = count + 1;
 	return (tokens);
-}
-
-/**
- * Frees memory for a single token.
- * Cleans up the value string and the token structure.
- */
-void	destroy_token(t_token *token)
-{
-	if (!token)
-		return ;
-	if (token->value)
-		free(token->value);
-	free(token);
 }

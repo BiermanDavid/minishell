@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:35:33 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 14:06:03 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:50:46 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

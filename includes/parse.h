@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 15:22:37 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:53:08 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_token_data
 t_token		*create_token(t_token_type type, const char *value, int position);
 t_token		**tokenize_input(const char *input, int *j);
 void		destroy_token(t_token *token);
+void		*safe_realloc(void *ptr, size_t size);
 
 /**
  * parse.c - parsing
@@ -96,6 +97,7 @@ t_cmd_list	*create_cmd_list(void);
 /**
  * Lexer.c
  */
+void	skip_whitespace(const char *input, int *pos);
 
 /**
  * lexer_word.c

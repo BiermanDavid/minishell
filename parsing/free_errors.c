@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:58:18 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:58:28 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:51:29 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,14 @@ void	free_cmd_list(t_cmd_list *list)
 		current = next;
 	}
 	free(list);
+}
+
+/**
+ * Skips whitespace wrapper function.
+ */
+
+void	skip_whitespace(const char *input, int *pos)
+{
+	while (input[*pos] == ' ' || input[*pos] == '\t')
+		(*pos)++;
 }

@@ -3,28 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/17 20:44:29 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:52:16 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
-
-/**
- * Removes the newline character from input string.
- * Not needed with readline but kept for compatibility.
- */
-void	strip_newline(char *input)
-{
-	int	len;
-
-	len = ft_strlen(input);
-	if (len > 0 && input[len - 1] == '\n')
-		input[len - 1] = '\0';
-}
 
 /**
  * Cleanup function for token array.
@@ -46,8 +33,7 @@ void	cleanup_tokens(t_token **tokens, int token_count)
 }
 
 /**
- * Initializes shell environment (signal.c)
- * Sets up signals and displays welcome message.
+ * Initializes shell environment signals
  */
 void	initialize_shell(void)
 {
@@ -56,8 +42,9 @@ void	initialize_shell(void)
 }
 
 /**
- * Main shell loop that handles the read-eval-print cycle.
- * Continues until user exits or EOF is encountered.
+ * Main shell loop, set up env and check for inputs
+ * func call for empty line edge case
+ * process input for parsing.
  */
 int	main(int argc, char **argv, char **envp)
 {
@@ -72,9 +59,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		input = read_input();
 		if (!input)
-		{
 			break ;
-		}
 		if (is_empty_line(input))
 		{
 			free(input);

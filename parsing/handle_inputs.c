@@ -3,16 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   handle_inputs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 13:52:10 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:51:41 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
 
+/**
+ * Final step after parsing, push full parsed content to Execution manager
+ * Then free the left over memory.
+ */
 static void	process_command_list(t_cmd_list *cmd_list, char ***envp)
 {
 	if (cmd_list && cmd_list->size > 0)
@@ -22,6 +26,11 @@ static void	process_command_list(t_cmd_list *cmd_list, char ***envp)
 	}
 }
 
+/**
+ * split the readline arguments into tokens,
+ * parse for specific cmds(expansion heredoc etc...)
+ * 
+ */
 void	process_input(char *input, char ***envp)
 {
 	t_token		**tokens;
@@ -37,6 +46,9 @@ void	process_input(char *input, char ***envp)
 	}
 }
 
+/**
+ * //TODO merge wrapper into read input?
+ */
 char	*read_complete_input(void)
 {
 	if (isatty(STDIN_FILENO))
