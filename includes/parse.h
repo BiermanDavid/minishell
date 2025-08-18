@@ -142,6 +142,23 @@ int			copy_var_value(char *result, int result_pos, const char *var_value);
 void		remove_quotes(char *result, const char *input, int len);
 char		*process_single_quotes(const char *input);
 
+/**
+ * handle_inputs_heredoc.c
+ */
+char		*extract_heredoc_delimiter(const char *input);
+char		*read_heredoc_content(const char *delimiter);
+
+/**
+ * handle_inputs_reader.c
+ */
+char		*read_from_tty(void);
+char		*read_from_pipe(void);
+
+/**
+ * parse_syntax.c
+ */
+int			check_syntax_errors(t_token **tokens, int token_count);
+
 int			copy_unquoted_section(const char *input, int start, char *result,
 				int *result_pos);
 int			copy_unquoted_section_expanded(const char *input, int start,

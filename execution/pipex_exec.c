@@ -1,52 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_exec.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/07 02:09:59 by dabierma         ###   ########.fr       */
+/*   Created: 2025/08/16 21:47:26 by dgessner          #+#    #+#             */
+/*   Updated: 2025/08/18 13:55:54 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-
-/**
- * Counts commands in pipeline.
- * Returns number of commands in pipeline.
- */
-int	count_pipeline_commands(t_cmd_node *start)
-{
-	t_cmd_node	*current;
-	int			cmd_count;
-
-	current = start;
-	cmd_count = 0;
-	while (current && current->cmd_type == CMD_PIPE)
-	{
-		current = current->next;
-		cmd_count++;
-	}
-	cmd_count++;
-	return (cmd_count);
-}
-
-/**
- * Creates pipes for pipeline.
- * Sets up all necessary pipes for command chain.
- */
-void	setup_pipes(int (*pipes)[2], int pipe_count)
-{
-	int	i;
-
-	i = 0;
-	while (i < pipe_count)
-	{
-		pipe(pipes[i]);
-		i++;
-	}
-}
 
 /**
  * Executes all middle commands in pipeline.
@@ -103,10 +67,29 @@ void	wait_for_pipeline(pid_t *pids, int cmd_count)
 }
 
 /**
+ * Sets up and executes all pipeline processes.
+ * Handles first, middle, and last command execution.
+ */
+static void	setup_pipeline_processes(t_cmd_node *start, pid_t *pids,
+	int pipes[][2], char ***envp)
+{
+	t_cmd_node	*current;
+	int			cmd_count;
+
+	current = start;
+	cmd_count = count_pipeline_commands(start);
+	pids[0] = exec_first_cmd(current, pipes, envp);
+	exec_middle_commands(start, pids, pipes, envp);
+	while (current->next)
+		current = current->next;
+	pids[cmd_count - 1] = exec_last_cmd(current, pipes, cmd_count - 1, envp);
+}
+
+/**
  * Helper function to execute pipeline processes.
  * Splits exec_pipeline to comply with Norm variable limit.
  */
-static t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
+t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
 		int cmd_count, int pipe_count, char ***envp)
 {
 	t_cmd_node	*current;
@@ -124,33 +107,13 @@ static t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
 		return (start->next);
 	}
 	setup_pipes(pipes, pipe_count);
-	current = start;
-	pids[0] = exec_first_cmd(current, pipes, envp);
-	exec_middle_commands(start, pids, pipes, envp);
-	while (current->next)
-		current = current->next;
-	pids[cmd_count - 1] = exec_last_cmd(current, pipes, pipe_count, envp);
+	setup_pipeline_processes(start, pids, pipes, envp);
 	close_all_pipes(pipes, pipe_count);
 	wait_for_pipeline(pids, cmd_count);
+	current = start;
+	while (current->next)
+		current = current->next;
 	free(pids);
 	free(pipes);
 	return (current->next);
-}
-
-/**
- * Executes a complete pipeline of commands.
- * Creates pipes and manages all processes with minimal signal handling.
- */
-t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
-{
-	int			cmd_count;
-	int			pipe_count;
-	t_cmd_node	*result;
-
-	set_minimal_signals();
-	cmd_count = count_pipeline_commands(start);
-	pipe_count = cmd_count - 1;
-	result = execute_pipeline_processes(start, cmd_count, pipe_count, envp);
-	initialize_shell_signals();
-	return (result);
 }

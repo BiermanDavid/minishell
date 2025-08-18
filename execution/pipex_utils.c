@@ -76,29 +76,39 @@ pid_t	exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 }
 
 /**
+ * Sets up pipe connections for middle command.
+ * Connects input and output pipes appropriately.
+ */
+static void	setup_middle_cmd_pipes(int pipes[][2], int i)
+{
+	int	pipe_count;
+	int	j;
+
+	dup2(pipes[i - 1][0], STDIN_FILENO);
+	dup2(pipes[i][1], STDOUT_FILENO);
+	pipe_count = i + 1;
+	j = 0;
+	while (j < pipe_count)
+	{
+		close(pipes[j][0]);
+		close(pipes[j][1]);
+		j++;
+	}
+}
+
+/**
  * Executes middle command in pipeline.
  * Reads from previous pipe, writes to next pipe.
  */
 pid_t	exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i, char ***envp)
 {
 	pid_t	pid;
-	int		pipe_count;
-	int		j;
 
 	pid = fork();
 	if (pid == 0)
 	{
 		setup_child_signals();
-		dup2(pipes[i - 1][0], STDIN_FILENO);
-		dup2(pipes[i][1], STDOUT_FILENO);
-		pipe_count = i + 1;
-		j = 0;
-		while (j < pipe_count)
-		{
-			close(pipes[j][0]);
-			close(pipes[j][1]);
-			j++;
-		}
+		setup_middle_cmd_pipes(pipes, i);
 		if (apply_redirections(node->files, *envp) == -1)
 			exit(1);
 		if (is_builtin(node->cmd[0]))

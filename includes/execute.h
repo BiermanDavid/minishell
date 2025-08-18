@@ -77,6 +77,11 @@ pid_t		exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i,
 pid_t		exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 				char ***envp);
 void		set_minimal_signals(void);
+t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
+				int cmd_count, int pipe_count, char ***envp);
+void		exec_middle_commands(t_cmd_node *start, pid_t *pids, int pipes[][2],
+				char ***envp);
+void		wait_for_pipeline(pid_t *pids, int cmd_count);
 void		restore_shell_signals(void);
 void		handle_ctrl_c_minimal(int sig);
 void		close_all_pipes(int (*pipes)[2], int pipe_count);

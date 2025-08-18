@@ -1,12 +1,17 @@
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -g -Iincludes
-SRC_DIR = functions
+PARSING_DIR = parsing
+EXECUTION_DIR = execution
 OBJ_DIR = objects
 
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
-SOURCES = $(wildcard $(SRC_DIR)/*.c)
-OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
+PARSING_SOURCES = $(wildcard $(PARSING_DIR)/*.c)
+EXECUTION_SOURCES = $(wildcard $(EXECUTION_DIR)/*.c)
+SOURCES = $(PARSING_SOURCES) $(EXECUTION_SOURCES)
+PARSING_OBJECTS = $(patsubst $(PARSING_DIR)/%.c, $(OBJ_DIR)/%.o, $(PARSING_SOURCES))
+EXECUTION_OBJECTS = $(patsubst $(EXECUTION_DIR)/%.c, $(OBJ_DIR)/%.o, $(EXECUTION_SOURCES))
+OBJECTS = $(PARSING_OBJECTS) $(EXECUTION_OBJECTS)
 TARGET = minishell
 
 # Add readline library
@@ -14,7 +19,11 @@ LIBS = -lreadline
 
 all: $(TARGET) message
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(PARSING_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(EXECUTION_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
