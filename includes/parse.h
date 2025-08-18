@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:53:08 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:57:44 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ t_cmd_list	*create_cmd_list(void);
 /**
  * Lexer.c
  */
-void	skip_whitespace(const char *input, int *pos);
+void		skip_whitespace(const char *input, int *pos);
 
 /**
  * lexer_word.c
