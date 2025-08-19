@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 22:05:50 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:09:42 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:25:31 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,19 +49,6 @@ char	*safe_strdup(const char *s)
 }
 
 /**
- * Frees memory for a single token.
- * Cleans up the value string and the token structure.
- */
-void	destroy_token(t_token *token)
-{
-	if (!token)
-		return ;
-	if (token->value)
-		free(token->value);
-	free(token);
-}
-
-/**
  * Adjusted version of realloc since its not allowed
  * uses malloc to make new memory
  * then copies it over
@@ -85,4 +72,17 @@ void	*safe_realloc(void *ptr, size_t old_size, size_t new_size)
 		free(ptr);
 	}
 	return (new_ptr);
+}
+
+/**
+ * Frees memory for a single token.
+ * Cleans up the value string and the token structure.
+ */
+void	destroy_token(t_token *token)
+{
+	if (!token)
+		return ;
+	if (token->value)
+		free(token->value);
+	free(token);
 }

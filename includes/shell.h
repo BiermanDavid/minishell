@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 22:55:03 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:34:07 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,15 +114,15 @@ typedef struct s_cmd_list
 /**
  * Signal.c - Signal handling functions for readline.
  */
-void	handle_ctrl_c(int sig);
 void	initialize_shell_signals(void);
 void	setup_child_signals(void);
+void	set_minimal_signals(void); //remove minimal signals from execute.h
 
 /**
  * signal_utils.c - Wrapper functions for signal handling.
  */
 void	ignore_rl_sigint_and_sigquit(void);
-void	handle_ctrl_c_minimal(int sig); //remove from exec.h
+void	handle_ctrl_c_minimal(int sig); //remove from exec.h 
 void	ignore_backslash(int sig);
 
 /**
@@ -137,6 +137,7 @@ bool	is_empty_line(const char *input);
  */
 void	*safe_malloc(size_t size);
 char	*safe_strdup(const char *s);
+void	*safe_realloc(void *ptr, size_t old_size, size_t new_size);
 void	destroy_token(t_token *token);
 
 #endif

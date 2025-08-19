@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:48 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 18:33:44 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:30:51 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /**
  * Voids the signal, returns new line as it should fort ctrl+c.
  */
-void	handle_ctrl_c(int sig)
+static void	handle_ctrl_c(int sig)
 {
 	(void)sig;
 	write(STDERR_FILENO, "\n", 1);

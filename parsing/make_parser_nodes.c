@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:57:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 18:52:07 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:38:53 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_file_node	*create_file_node(char *filename, int redir_type)
  * Creates a new empty file list.
  * Initializes the file list structure.
  */
-t_file_list	*create_file_list(void)
+static t_file_list	*create_file_list(void)
 {
 	t_file_list	*list;
 

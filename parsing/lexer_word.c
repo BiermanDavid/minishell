@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:39:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 23:41:27 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:39:57 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static int	calculate_word_length(const char *input, int *pos)
 /**
  * Copies word from input to memory buffer
  */
-void	copy_word(char *word, const char *input, int start, int len)
+static void	copy_word(char *word, const char *input, int start, int len)
 {
 	int	i;
 

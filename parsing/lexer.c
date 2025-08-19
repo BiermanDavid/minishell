@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:35 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 23:00:15 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:30:04 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,14 @@ static int	process_single_token(const char *input, int pos, t_token **tokens,
 static t_token	**realloc_wrapper(t_token **tokens, int count, int *buffer)
 {
 	t_token	**new_tokens;
+	int		old_buffer;
 
 	if (count < *buffer - 1)
 		return (tokens);
+	old_buffer = *buffer;
 	*buffer *= 2;
-	new_tokens = safe_realloc(tokens, *buffer * sizeof(t_token *));
+	new_tokens = safe_realloc(tokens, old_buffer * sizeof(t_token *),
+			(*buffer) * sizeof(t_token *));
 	return (new_tokens);
 }
 

@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 23:58:09 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:51:16 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,6 @@ typedef struct s_token_data
 }	t_token_data;
 
 /**
- * Token creation and basic lexical analysis functions.
- */
-t_token		**tokenize_input(const char *input, int *j);
-void		*safe_realloc(void *ptr, size_t size);
-
-/**
  * parse.c - parsing
  */
 t_cmd_list	*parse_command(t_token **token, int j, char **env);
@@ -59,9 +53,7 @@ char		**extract_command_args(t_token **token, int start,
  * expansion.c - Variable expansion and quote processing for shell input.
  */
 char		*expand_variables(const char *input, char **envp);
-// char		*process_quoted_string(const char *input, char **envp);
 char		*expand_token(const char *token_value, char **envp);
-int			extract_var_name(const char *input, int input_pos, char *var_name);
 
 /**
  * expansion_quotes_utils.c - Helper functions for variable expansion.
@@ -71,15 +63,10 @@ void		remove_quotes(char *result, const char *input, int len);
 int			copy_unquoted_section_expanded(const char *input, int start,
 				t_quote_context *ctx);
 
-int			process_special_variable(const char *input, int input_pos,
-				t_exp_data *data);
-int			process_escape_sequence(const char *input, int input_pos,
-				char *result, int *result_pos);
 /**
  * make_parser_nodes.c -
  */
 t_file_node	*create_file_node(char *filename, int redir_type);
-t_file_list	*create_file_list(void);
 void		add_file_to_list(t_file_list *list, t_file_node *node);
 t_cmd_node	*create_cmd_node(int cmd_type);
 t_cmd_list	*create_cmd_list(void);
@@ -88,6 +75,7 @@ t_cmd_list	*create_cmd_list(void);
  * Lexer.c
  */
 t_token		*create_token(t_token_type type, const char *value, int position);
+t_token		**tokenize_input(const char *input, int *j);
 
 /**
  * lexer_word.c
@@ -143,10 +131,22 @@ char		*read_from_pipe(void);
  * parse_syntax.c
  */
 int			check_syntax_errors(t_token **tokens, int token_count);
+int			heredoc_edge_case(t_token_data *data, int i);
+
+/**
+ * expansion_quotes_mixed.c
+ */
 int			process_quoted_part(const char *input, int pos,
 				t_quote_context *ctx);
 int			has_mixed_quotes(const char *input);
 char		*process_mixed_content(const char *input, char **envp);
-int			heredoc_edge_case(t_token_data *data, int i);
+/**
+ * Expansion_utils.c 
+ */
+int			extract_var_name(const char *input, int input_pos, char *var_name);
+int			process_special_variable(const char *input, int input_pos,
+				t_exp_data *data);
+int			process_escape_sequence(const char *input, int input_pos,
+				char *result, int *result_pos);
 
 #endif
