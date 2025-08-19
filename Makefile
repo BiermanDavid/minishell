@@ -15,7 +15,6 @@ $(PARSING_DIR)/expansion_quotes.c \
 $(PARSING_DIR)/expansion.c \
 $(PARSING_DIR)/expansion_utils.c \
 $(PARSING_DIR)/free_errors.c \
-$(PARSING_DIR)/handle_inputs_heredoc.c \
 $(PARSING_DIR)/handle_inputs_reader.c \
 $(PARSING_DIR)/handle_inputs.c \
 $(PARSING_DIR)/heredoc_utils.c \
@@ -63,7 +62,6 @@ $(OBJ_DIR)/expansion_quotes.o \
 $(OBJ_DIR)/expansion_utils.o \
 $(OBJ_DIR)/expansion.o \
 $(OBJ_DIR)/free_errors.o \
-$(OBJ_DIR)/handle_inputs_heredoc.o \
 $(OBJ_DIR)/handle_inputs_reader.o \
 $(OBJ_DIR)/handle_inputs.o \
 $(OBJ_DIR)/heredoc_utils.o \

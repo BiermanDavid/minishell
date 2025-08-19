@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 22:05:50 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 17:52:26 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:50:24 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,17 @@ void	destroy_token(t_token *token)
 	free(token);
 }
 
-void	*safe_realloc(void *ptr, size_t size)
+void	*safe_realloc(void *ptr, size_t old_size, size_t new_size)
 {
 	void	*new_ptr;
 
-	new_ptr = realloc(ptr, size);
-	if (!new_ptr && size > 0)
+	new_ptr = realloc(ptr, new_size);
+	if (!new_ptr)
+		return (NULL);
+	if (ptr)
 	{
+		ft_memcpy(new_ptr, ptr, old_size);
 		free(ptr);
-		write(2, "Error: Memory allocation failed\n", 33);
-		exit(1);
 	}
 	return (new_ptr);
 }

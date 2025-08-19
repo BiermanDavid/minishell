@@ -6,61 +6,11 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:21:57 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 20:04:10 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:01:35 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
-
-/**
- * Joins input with heredoc content.
- * Combines base input with heredoc data using newline separator.
- */
-static char	*join_heredoc_input(char *input, char *heredoc_content)
-{
-	char	*temp;
-	char	*complete_input;
-
-	if (!input)
-		return (NULL);
-	temp = ft_strjoin(input, "\n");
-	if (temp)
-	{
-		complete_input = ft_strjoin(temp, heredoc_content);
-		free(temp);
-	}
-	else
-		complete_input = NULL;
-	return (complete_input);
-}
-
-/**
- * Processes input and handles heredoc if present.
- * Returns complete input including heredoc content.
- */
-static char	*process_heredoc_input(char *input)
-{
-	char	*delimiter;
-	char	*heredoc_content;
-	char	*complete_input;
-
-	if (!input)
-		return (NULL);
-	delimiter = extract_heredoc_delimiter(input);
-	if (!delimiter)
-		return (input);
-	heredoc_content = read_heredoc_content(delimiter);
-	if (!heredoc_content)
-	{
-		free(delimiter);
-		return (input);
-	}
-	complete_input = join_heredoc_input(input, heredoc_content);
-	free(heredoc_content);
-	free(input);
-	free(delimiter);
-	return (complete_input);
-}
 
 /**
  * Reads input from interactive terminal.
@@ -75,7 +25,7 @@ char	*read_from_tty(void)
 		return (NULL);
 	if (*input)
 		add_history(input);
-	return (process_heredoc_input(input));
+	return (input);
 }
 
 /**
@@ -121,5 +71,5 @@ char	*read_from_pipe(void)
 	input = read_pipe_line();
 	if (!input)
 		return (NULL);
-	return (process_heredoc_input(input));
+	return (input);
 }
