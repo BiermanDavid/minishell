@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 00:34:07 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:54:08 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,13 @@ typedef struct s_cmd_list
  */
 void	initialize_shell_signals(void);
 void	setup_child_signals(void);
-void	set_minimal_signals(void); //remove minimal signals from execute.h
+void	set_minimal_signals(void);
 
 /**
  * signal_utils.c - Wrapper functions for signal handling.
  */
 void	ignore_rl_sigint_and_sigquit(void);
-void	handle_ctrl_c_minimal(int sig); //remove from exec.h 
+void	handle_ctrl_c_minimal(int sig);
 void	ignore_backslash(int sig);
 
 /**
