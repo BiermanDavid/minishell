@@ -6,12 +6,31 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 19:39:44 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:52:10 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
+
+/**
+ * Cleanup function for token array.
+ * Frees all tokens and the array itself.
+ */
+static void	cleanup_tokens(t_token **tokens, int token_count)
+{
+	int	i;
+
+	if (!tokens)
+		return ;
+	i = 0;
+	while (i < token_count)
+	{
+		destroy_token(tokens[i]);
+		i++;
+	}
+	free(tokens);
+}
 
 /**
  * Final step after parsing, push full parsed content to Execution manager

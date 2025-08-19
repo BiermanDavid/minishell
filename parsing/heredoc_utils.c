@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 13:52:42 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 21:57:14 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:46:32 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,7 @@ char	*read_heredoc(char *buffer, size_t buffer_size)
 	int		bytes_read;
 
 	if (isatty(STDIN_FILENO))
-	{
 		write(STDOUT_FILENO, "heredoc> ", 9);
-	}
 	i = 0;
 	while (i < buffer_size - 1)
 	{

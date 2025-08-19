@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:39:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 18:48:34 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:41:27 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
  * Checks if character should break word reading
  * Returns true for delimiters and operators
  */
-bool	is_word_delimiter(char c)
+static bool	is_word_delimiter(char c)
 {
 	return (c == ' ' || c == '\t' || c == '|' || c == '&'
 		|| c == '>' || c == '<' || c == ';');
@@ -26,7 +26,7 @@ bool	is_word_delimiter(char c)
  * Updates position and quote status as true
  * in_q = in quotes && q_char = quote character
  */
-void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
+static void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
 {
 	if (!*in_q)
 	{
@@ -54,7 +54,7 @@ void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
  * so if we echo hello'world' it should consdier a compound word to be echoed
  * instead of echoing only world.
  */
-int	calculate_word_length(const char *input, int *pos)
+static int	calculate_word_length(const char *input, int *pos)
 {
 	int		start;
 	bool	in_q;

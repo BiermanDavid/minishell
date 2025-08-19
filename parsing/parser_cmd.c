@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_cmd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:43:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/17 21:00:07 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:58:02 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	add_cmd_to_list(t_cmd_list *list, t_cmd_node *node)
  * Allocates memory for command arguments array.
  * Helper function for extract_command_args.
  */
-char	**allocate_args_array(int word_count)
+static char	**allocate_args_array(int word_count)
 {
 	char	**args;
 
@@ -51,7 +51,7 @@ char	**allocate_args_array(int word_count)
  * Processes a single token for command arguments.
  * Expands token if needed and creates string copy.
  */
-char	*process_token_arg(t_token *token, char **envp)
+static char	*process_token_arg(t_token *token, char **envp)
 {
 	char	*result;
 

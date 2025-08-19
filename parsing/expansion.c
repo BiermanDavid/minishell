@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 18:04:12 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:57:37 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*expand_variables(const char *input, char **envp)
  * Determines quote type and processes accordingly.
  * Routes to appropriate quote handler based on content type.
  */
-char	*process_quoted_string(const char *input, char **envp)
+static char	*process_quoted_string(const char *input, char **envp)
 {
 	if (!input || ft_strlen(input) == 0)
 		return (NULL);

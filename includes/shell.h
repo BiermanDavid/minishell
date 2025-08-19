@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/17 20:48:20 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:55:03 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ typedef enum t_token_type
 	TOKEN_REDIRECT_OUT,
 	TOKEN_REDIRECT_APPEND,
 	TOKEN_HEREDOC,
-	TOKEN_LOGICAL_AND,
-	TOKEN_LOGICAL_OR,
 	TOKEN_SEMICOLON,
 	TOKEN_BACKGROUND,
 	TOKEN_EOF
@@ -68,11 +66,6 @@ typedef enum t_cmd_type
 {
 	CMD_SIMPLE,
 	CMD_PIPE,
-	CMD_BUILTIN,
-	CMD_EXTERNAL,
-	CMD_LOGICAL_AND,
-	CMD_LOGICAL_OR,
-	CMD_SEQUENCE,
 	CMD_BACKGROUND
 }	t_cmd_type;
 
@@ -119,36 +112,31 @@ typedef struct s_cmd_list
 }	t_cmd_list;
 
 /**
- * Shell loop and user interface functions for input handling.
- */
-void	display_prompt(void);
-void	strip_newline(char *input);
-void	cleanup_tokens(t_token **tokens, int token_count);
-void	run_shell_loop(void);
-
-/**
  * Signal.c - Signal handling functions for readline.
  */
+void	handle_ctrl_c(int sig);
 void	initialize_shell_signals(void);
 void	setup_child_signals(void);
+
+/**
+ * signal_utils.c - Wrapper functions for signal handling.
+ */
 void	ignore_rl_sigint_and_sigquit(void);
+void	handle_ctrl_c_minimal(int sig); //remove from exec.h
 void	ignore_backslash(int sig);
-void	handle_ctrl_c(int sig);
-void	handle_ctrl_c_minimal(int sig);
 
 /**
  * handle_inputs.c - manages response for input edge cases
  */
+void	process_input(char *input, char ***envp);
 char	*read_input(void);
 bool	is_empty_line(const char *input);
-bool	handle_exit_command(char *input);
-void	process_input(char *input, char ***envp);
 
 /**
- * error_management.c - standardized error handling
+ * memory_utils.c - standardized error handling
  */
 void	*safe_malloc(size_t size);
 char	*safe_strdup(const char *s);
-void	cleanup_on_error(void **ptrs, int count);
+void	destroy_token(t_token *token);
 
 #endif

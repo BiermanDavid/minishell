@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 20:13:26 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:56:05 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Counts WORD tokens until hitting an operator or EOF.
  * Used to determine command argument count.
  */
-int	count_words_until_operator(t_token **tokens, int start, int token_count)
+static int	count_words_until_operator(t_token **tokens, int start, int token_count)
 {
 	int	count;
 	int	i;
@@ -35,7 +35,7 @@ int	count_words_until_operator(t_token **tokens, int start, int token_count)
  * Determines command type based on following token.
  * Sets appropriate command type for execution.
  */
-void	set_command_type(t_cmd_node *cmd, t_token **tokens, int i,
+static void	set_command_type(t_cmd_node *cmd, t_token **tokens, int i,
 		int token_count)
 {
 	if (i < token_count)
@@ -51,7 +51,7 @@ void	set_command_type(t_cmd_node *cmd, t_token **tokens, int i,
  * Skips separator tokens in token array.
  * Returns updated index after skipping separators.
  */
-int	skip_separators(t_token **tokens, int i, int token_count)
+static int	skip_separators(t_token **tokens, int i, int token_count)
 {
 	while (i < token_count && (tokens[i]->type == TOKEN_SEMICOLON
 			|| tokens[i]->type == TOKEN_BACKGROUND))
@@ -63,7 +63,7 @@ int	skip_separators(t_token **tokens, int i, int token_count)
  * Processes a single command from tokens.
  * Creates command node and parses arguments and redirections.
  */
-int	process_single_command(t_token_data *data, int i,
+static int	process_single_command(t_token_data *data, int i,
 	t_cmd_list *cmd_list, char **env)
 {
 	t_cmd_node	*current_cmd;

@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 22:05:50 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 21:50:24 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:07:53 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,26 @@ void	destroy_token(t_token *token)
 	free(token);
 }
 
+/**
+ * Adjusted version of realloc since its not allowed
+ * uses malloc to make new memory
+ * then copies it over
+ * then frees the old memory.
+ */
 void	*safe_realloc(void *ptr, size_t old_size, size_t new_size)
 {
 	void	*new_ptr;
+	size_t	copy_size;
 
-	new_ptr = realloc(ptr, new_size);
+	new_ptr = malloc(new_size);
 	if (!new_ptr)
 		return (NULL);
 	if (ptr)
 	{
+		if (old_size < new_size)
+			copy_size = old_size;
+		else
+			copy_size = new_size;
 		ft_memcpy(new_ptr, ptr, old_size);
 		free(ptr);
 	}

@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:50:15 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 17:33:14 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:45:04 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Determines redirection type from token type.
  * Maps token types to redirection types.
  */
-int	get_redir_type(t_token_type token_type)
+static int	get_redir_type(t_token_type token_type)
 {
 	if (token_type == TOKEN_REDIRECT_IN)
 		return (REDIR_IN);
@@ -33,7 +33,7 @@ int	get_redir_type(t_token_type token_type)
  * Handles heredoc redirection parsing.
  * Collects heredoc content and creates file node.
  */
-int	heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd)
+static int	heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd)
 {
 	t_file_node	*file_node;
 
@@ -50,7 +50,7 @@ int	heredoc_redir(t_token **token, int i, int j, t_cmd_node *cmd)
  * Handles standard redirection parsing.
  * Creates file node for input, output, or append redirections.
  */
-int	standard_redir(t_token **token, int i, int j, t_cmd_node *cmd)
+static int	standard_redir(t_token **token, int i, int j, t_cmd_node *cmd)
 {
 	int			redir_type;
 	t_file_node	*file_node;

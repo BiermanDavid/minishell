@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:47:44 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 20:03:08 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:45:54 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Appends a line to heredoc data buffer.
  * Handles buffer reallocation if needed.
  */
-char	*append_heredoc(char *data, char *line, size_t *len, size_t *size)
+static char	*append_heredoc(char *data, char *line, size_t *len, size_t *size)
 {
 	size_t	line_len;
 	size_t	needed_size;

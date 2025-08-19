@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:35 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 20:03:32 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 23:00:15 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_token	*create_token(t_token_type type, const char *value, int position)
  * know which element of the meta struct it belongs to
  * basically just finds the correct token type 
  */
-int	process_single_token(const char *input, int pos, t_token **tokens,
+static int	process_single_token(const char *input, int pos, t_token **tokens,
 		int *count)
 {
 	if (is_multi_char_op(input, pos))

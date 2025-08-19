@@ -6,31 +6,12 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 21:45:56 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:51:58 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 #include "execute.h"
-
-/**
- * Cleanup function for token array.
- * Frees all tokens and the array itself.
- */
-void	cleanup_tokens(t_token **tokens, int token_count)
-{
-	int	i;
-
-	if (!tokens)
-		return ;
-	i = 0;
-	while (i < token_count)
-	{
-		destroy_token(tokens[i]);
-		i++;
-	}
-	free(tokens);
-}
 
 /**
  * Initializes shell environment signals
@@ -46,7 +27,7 @@ void	cleanup_tokens(t_token **tokens, int token_count)
  * the eval sheet only says that if it crashes to fail, not that it needs to 
  * mimic the behavior of bash exactly in this edge case.
  */
-void	initialize_shell(void)
+static void	initialize_shell(void)
 {
 	initialize_shell_signals();
 	ignore_rl_sigint_and_sigquit();
