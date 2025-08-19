@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:15:06 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/06 15:29:24 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:41:19 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,6 @@ static char	*get_cd_target(char **args, char **envp)
 }
 
 /**
- * Changes the current working directory to the specified target.
- * Returns 0 on success, 1 on failure.
- */
-static int	change_directory(char *target)
-{
-	if (!target || chdir(target) != 0)
-	{
-		perror("cd");
-		return (1);
-	}
-	return (0);
-}
-
-/**
  * Implements the cd builtin command functionality.
  * Changes directory and updates PWD and OLDPWD environment variables.
  * Returns 0 on success, 1 on failure.
@@ -68,11 +54,13 @@ int	builtin_cd(char **args, char ***envp)
 		return (1);
 	}
 	target = get_cd_target(args, *envp);
-	if (target == NULL && args[1] && ft_strncmp(args[1], "-", 2) == 0
-		&& ft_strlen(args[1]) == 1)
+	if (!target)
 		return (1);
-	if (change_directory(target) != 0)
+	if (chdir(target) != 0)
+	{
+		print_directory_not_found(target);
 		return (1);
+	}
 	env_set(envp, "OLDPWD", cwd);
 	if (getcwd(cwd, sizeof(cwd)))
 		env_set(envp, "PWD", cwd);

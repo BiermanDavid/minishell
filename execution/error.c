@@ -39,7 +39,9 @@ int	print_command_not_found(const char *cmd)
 {
 	if (!cmd)
 		return (127);
-	printf("minishell: %s: command not found\n", cmd);
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, ": command not found\n", 20);
 	return (127);
 }
 
@@ -51,6 +53,22 @@ int	print_permission_denied(const char *cmd)
 {
 	if (!cmd)
 		return (126);
-	printf("minishell: %s: permission denied\n", cmd);
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, ": permission denied\n", 20);
 	return (126);
+}
+
+/**
+ * Prints directory does not exist error.
+ * Used when cd target directory cannot be found.
+ */
+int	print_directory_not_found(const char *dir)
+{
+	if (!dir)
+		return (1);
+	write(STDERR_FILENO, "cd: ", 4);
+	write(STDERR_FILENO, dir, ft_strlen(dir));
+	write(STDERR_FILENO, ": No such file or directory\n", 28);
+	return (1);
 }

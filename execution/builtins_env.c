@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 23:45:17 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/17 20:40:29 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:45:43 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ static int	handle_export_with_value(char *arg, char *eq, char ***envp)
 	if (!is_valid_identifier(arg))
 	{
 		*eq = '=';
-		printf("minishell: export: `%s': not a valid identifier\n", arg);
+		write(STDERR_FILENO, "minishell: export: `", 20);
+		write(STDERR_FILENO, arg, ft_strlen(arg));
+		write(STDERR_FILENO, "': not a valid identifier\n", 26);
 		g_exit_status = 1;
 		return (1);
 	}
@@ -50,7 +52,9 @@ static int	handle_export_argument(char *arg, char ***envp)
 		return (handle_export_with_value(arg, eq, envp));
 	else if (!is_valid_identifier(arg))
 	{
-		printf("minishell: export: `%s': not a valid identifier\n", arg);
+		write(STDERR_FILENO, "minishell: export: `", 20);
+		write(STDERR_FILENO, arg, ft_strlen(arg));
+		write(STDERR_FILENO, "': not a valid identifier\n", 26);
 		g_exit_status = 1;
 		return (1);
 	}
@@ -105,6 +109,6 @@ int	builtin_unset(char **args, char ***envp)
  */
 int	builtin_env(char **env)
 {
-	env_print(env);
+	env_print(env);// can be better implemmented
 	return (0);
 }

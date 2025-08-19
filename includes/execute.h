@@ -31,6 +31,7 @@ void		exec_absolute_path(t_cmd_node *node, char **env);
 void		try_path_execution(t_cmd_node *node, char **env, char **paths);
 int			print_permission_denied(const char *cmd);
 int			print_command_not_found(const char *cmd);
+int			print_directory_not_found(const char *dir);
 
 /* Builtin utilities */
 int			builtin_echo(char **args);

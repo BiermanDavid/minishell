@@ -71,7 +71,9 @@ void	exec_absolute_path(t_cmd_node *node, char **env)
 		exit(print_command_not_found(node->cmd[0]));
 	if (stat(node->cmd[0], &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
 	{
-		printf("minishell: %s: is a directory\n", node->cmd[0]);
+		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, node->cmd[0], ft_strlen(node->cmd[0]));
+		write(STDERR_FILENO, ": is a directory\n", 17);
 		exit(126);
 	}
 	if (access(node->cmd[0], X_OK) != 0)
