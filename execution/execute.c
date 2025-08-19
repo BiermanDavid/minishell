@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 17:56:42 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:11:21 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,13 @@ int	g_exit_status = 0;
 
 /**
  * Executes a single command node with proper expansion and redirection.
- * Handles variable assignments, builtins, and external commands.
+ * Processing order:
+ * 1. Validates node has command
+ * 2. Expands wildcards and variables in arguments
+ * 3. Checks for standalone variable assignment (VAR=value)
+ * 4. Executes builtin commands with redirection support
+ * 5. Executes external commands via PATH lookup
+ * Returns command exit status (0 = success, non-zero = error).
  */
 int	execute_single(t_cmd_node *node, char ***envp)
 {
@@ -26,7 +32,7 @@ int	execute_single(t_cmd_node *node, char ***envp)
 	expand_command_args(node, *envp);
 	if (!node->cmd[0] || !node->cmd[0][0])
 		return (0);
-	if (is_variable_assignment(node))
+	if (is_assignment(node->cmd[0]) && node->cmd[1] == NULL)
 		return (handle_assignment(node, envp));
 	if (is_builtin(node->cmd[0]))
 		return (exec_builtin_redir(node, envp));
@@ -59,13 +65,4 @@ int	execution_manager(t_cmd_list *cmd_list, char ***envp)
 		}
 	}
 	return (g_exit_status);
-}
-
-/**
- * Checks if a command node represents a variable assignment.
- * Returns 1 if it's an assignment with no additional arguments.
- */
-int	is_variable_assignment(t_cmd_node *node)
-{
-	return (is_assignment(node->cmd[0]) && node->cmd[1] == NULL);
 }

@@ -6,30 +6,11 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:13 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/17 20:41:12 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:32:46 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
-
-/**
- * General argument validator that routes to specific validators.
- * Returns true if arguments are valid for the command.
- */
-bool	validate_command_args(char **args)
-{
-	if (!args || !args[0])
-		return (false);
-	if (is_cat_command(args[0]))
-		return (validate_cat_args(args));
-	else if (is_mkdir_command(args[0]))
-		return (validate_mkdir_args(args));
-	else if (is_ls_command(args[0]))
-		return (validate_ls_args(args));
-	else if (is_grep_command(args[0]))
-		return (validate_grep_args(args));
-	return (true);
-}
 
 /**
  * Prints command not found error.

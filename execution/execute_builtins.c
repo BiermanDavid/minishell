@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_builtins.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:20:44 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/06 15:32:34 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:22:32 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

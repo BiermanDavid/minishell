@@ -21,7 +21,6 @@ int			exec_external(t_cmd_node *node, char **env);
 int			exec_builtin_redir(t_cmd_node *node, char ***envp);
 int			execute_single(t_cmd_node *node, char ***envp);
 int			handle_assignment(t_cmd_node *node, char ***envp);
-int			is_variable_assignment(t_cmd_node *node);
 
 /* Utility functions */
 void		free_split(char **arr);
@@ -87,15 +86,6 @@ void		restore_shell_signals(void);
 void		handle_ctrl_c_minimal(int sig);
 void		close_all_pipes(int (*pipes)[2], int pipe_count);
 
-/* Command validation functions */
-bool		validate_cat_args(char **args);
-bool		validate_mkdir_args(char **args);
-bool		validate_ls_args(char **args);
-bool		validate_grep_args(char **args);
-bool		is_cat_command(const char *cmd);
-bool		is_mkdir_command(const char *cmd);
-bool		is_ls_command(const char *cmd);
-bool		is_grep_command(const char *cmd);
 
 /* Wildcard expansion functions */
 char		**expand_wildcards(const char *pattern, int *match_count);

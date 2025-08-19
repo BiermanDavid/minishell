@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 21:12:35 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 21:50:24 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:16:59 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,4 +68,19 @@ int	builtin_exit(char **args)
 	(void)args;
 	exit(0);
 	return (0);
+}
+
+/**
+ * Prints all current environment variables.
+ */
+void	env_print(char **env)
+{
+	int	i;
+
+	i = 0;
+	while (env && env[i])
+	{
+		printf("%s\n", env[i]);
+		i++;
+	}
 }

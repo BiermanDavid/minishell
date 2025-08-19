@@ -40,7 +40,6 @@ EXECUTION_SOURCES = $(EXECUTION_DIR)/builtin_cd.c \
 $(EXECUTION_DIR)/builtins_env.c \
 $(EXECUTION_DIR)/builtins.c \
 $(EXECUTION_DIR)/cmd_array_utils.c \
-$(EXECUTION_DIR)/command_utils.c \
 $(EXECUTION_DIR)/command_validation.c \
 $(EXECUTION_DIR)/env_helper.c \
 $(EXECUTION_DIR)/env_set.c \
@@ -88,8 +87,6 @@ EXECUTION_OBJECTS = $(OBJ_DIR)/builtin_cd.o \
 $(OBJ_DIR)/builtins_env.o \
 $(OBJ_DIR)/builtins.o \
 $(OBJ_DIR)/cmd_array_utils.o \
-$(OBJ_DIR)/command_utils.o \
-$(OBJ_DIR)/command_validation.o \
 $(OBJ_DIR)/env_helper.o \
 $(OBJ_DIR)/env_set.o \
 $(OBJ_DIR)/env.o \

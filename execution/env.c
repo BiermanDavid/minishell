@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 00:25:13 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/04 21:51:19 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:16:41 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,4 @@ int	env_unset(char ***envp, const char *key)
 		i++;
 	}
 	return (1);
-}
-
-/**
- * Prints all current environment variables.
- */
-void	env_print(char **env)
-{
-	int	i;
-
-	i = 0;
-	while (env && env[i])
-	{
-		write(STDOUT_FILENO, env[i], ft_strlen(env[i]));
-		write(STDOUT_FILENO, "\n", 1);
-		i++;
-	}
 }

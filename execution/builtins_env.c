@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/02 23:45:17 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 20:45:43 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 21:44:24 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ int	builtin_unset(char **args, char ***envp)
  */
 int	builtin_env(char **env)
 {
-	env_print(env);// can be better implemmented
+	env_print(env);
 	return (0);
 }
+
