@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:32:54 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 18:06:16 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:13:52 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,5 +174,6 @@ int			has_mixed_quotes(const char *input);
 char		*process_mixed_content(const char *input, char **envp);
 int			process_single_command(t_token_data *data, int i,
 				t_cmd_list *cmd_list, char **env);
+int			heredoc_edge_case(t_token_data *data, int i);
 
 #endif

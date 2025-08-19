@@ -6,14 +6,14 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:39:19 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:51:58 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:48:34 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 /**
- * Checks if character should break word reading.
- * Returns true for delimiters and operators.
+ * Checks if character should break word reading
+ * Returns true for delimiters and operators
  */
 bool	is_word_delimiter(char c)
 {
@@ -22,9 +22,9 @@ bool	is_word_delimiter(char c)
 }
 
 /**
- * Handles quote processing in word reading.
- * Updates position and quote state.
- * q is quotes
+ * Handles quotes
+ * Updates position and quote status as true
+ * in_q = in quotes && q_char = quote character
  */
 void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
 {
@@ -49,6 +49,10 @@ void	handle_quote(const char *input, int *pos, bool *in_q, char *q_char)
 /**
  * Calculates word length with quote handling.
  * Returns the length of the word token.
+ * This function handles edge cases for quotes insie of words
+ * I.E. Hello'world' has a quote in the world
+ * so if we echo hello'world' it should consdier a compound word to be echoed
+ * instead of echoing only world.
  */
 int	calculate_word_length(const char *input, int *pos)
 {
@@ -70,8 +74,7 @@ int	calculate_word_length(const char *input, int *pos)
 }
 
 /**
- * Copies word from input to allocated buffer.
- * Helper function for read_word.
+ * Copies word from input to memory buffer
  */
 void	copy_word(char *word, const char *input, int start, int len)
 {
@@ -87,8 +90,8 @@ void	copy_word(char *word, const char *input, int start, int len)
 }
 
 /**
- * Reads a word token from input with proper quote handling.
- * Handles single quotes, double quotes, and bare words correctly.
+ * Reads a word token from input
+ * Handles single quotes, double quotes with calc word len func cal
  */
 char	*read_word(const char *input, int *pos)
 {

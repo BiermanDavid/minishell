@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_inputs_heredoc.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 21:29:11 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 14:02:30 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:00:49 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

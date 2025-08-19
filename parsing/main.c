@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:52:16 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 19:36:48 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ void	initialize_shell(void)
  * Main shell loop, set up env and check for inputs
  * func call for empty line edge case
  * process input for parsing.
+ * set up an env which allows us to execute local information
+ * like LS bin or USER type variabels.
+ * env allows us to find paths on local cmputer
  */
 int	main(int argc, char **argv, char **envp)
 {

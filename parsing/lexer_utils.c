@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 18:40:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:51:51 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:44:24 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ int	single_char(const char *input, int pos, t_token **tokens, int i)
 
 /**
 * Processes a word token.
-* Returns updated position after processing word.
 */
 int	word_token(const char *input, int pos, t_token **tokens, int i)
 {
@@ -70,8 +69,8 @@ int	word_token(const char *input, int pos, t_token **tokens, int i)
 }
 
 /**
-* Checks if operator is multi-character.
-* Returns true for >> and << operators.
+* Checks if operator is multi-character (plus 1 used for pos)
+* Returns true for >> and << operators
 */
 bool	is_multi_char_op(const char *input, int pos)
 {
@@ -80,8 +79,8 @@ bool	is_multi_char_op(const char *input, int pos)
 }
 
 /**
-* Checks if character is single-character operator.
-* Returns true for single character operators.
+* Checks if character is single-character
+* Returns true
 */
 bool	is_single_char_op(char c)
 {

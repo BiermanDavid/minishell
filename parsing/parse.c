@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 17:59:41 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:13:26 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ int	process_single_command(t_token_data *data, int i,
 	t_cmd_node	*current_cmd;
 	int			word_count;
 
+	if (data->tokens[i]->type >= TOKEN_REDIRECT_IN
+		&& data->tokens[i]->type <= TOKEN_HEREDOC)
+		return (heredoc_edge_case(data, i));
 	if (data->tokens[i]->type != TOKEN_WORD)
 		return (i + 1);
 	word_count = count_words_until_operator(data->tokens, i, data->token_count);

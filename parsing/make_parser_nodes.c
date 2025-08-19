@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:57:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/07/30 15:57:53 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:52:07 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ void	add_file_to_list(t_file_list *list, t_file_node *node)
 }
 
 /**
- * Creates a new command node.
- * Allocates and initializes a command node structure.
+ * Creates a new command node
+ * Allocates and inits command node structure
  */
 t_cmd_node	*create_cmd_node(int cmd_type)
 {
@@ -96,8 +96,8 @@ t_cmd_node	*create_cmd_node(int cmd_type)
 }
 
 /**
- * Creates a new command list.
- * Initializes the command list structure.
+ * Creates a new command list
+ * Initializes the command list structure
  */
 t_cmd_list	*create_cmd_list(void)
 {

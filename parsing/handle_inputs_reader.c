@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 19:21:57 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 18:10:23 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/19 20:04:10 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ static char	*join_heredoc_input(char *input, char *heredoc_content)
 	char	*temp;
 	char	*complete_input;
 
+	if (!input)
+		return (NULL);
 	temp = ft_strjoin(input, "\n");
 	if (temp)
 	{
@@ -42,6 +44,8 @@ static char	*process_heredoc_input(char *input)
 	char	*heredoc_content;
 	char	*complete_input;
 
+	if (!input)
+		return (NULL);
 	delimiter = extract_heredoc_delimiter(input);
 	if (!delimiter)
 		return (input);
@@ -67,7 +71,9 @@ char	*read_from_tty(void)
 	char	*input;
 
 	input = readline("🐢minishell> ");
-	if (input && *input)
+	if (!input)
+		return (NULL);
+	if (*input)
 		add_history(input);
 	return (process_heredoc_input(input));
 }
