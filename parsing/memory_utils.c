@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 22:05:50 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:07:53 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:09:42 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	*safe_realloc(void *ptr, size_t old_size, size_t new_size)
 			copy_size = old_size;
 		else
 			copy_size = new_size;
-		ft_memcpy(new_ptr, ptr, old_size);
+		ft_memcpy(new_ptr, ptr, copy_size);
 		free(ptr);
 	}
 	return (new_ptr);
