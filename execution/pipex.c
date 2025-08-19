@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 13:55:17 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/19 22:58:07 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,4 +65,21 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 	result = execute_pipeline_processes(start, cmd_count, pipe_count, envp);
 	initialize_shell_signals();
 	return (result);
+}
+
+/**
+ * Closes all pipe file descriptors in parent process.
+ * Essential for proper pipeline termination.
+ */
+void	close_all_pipes(int pipes[][2], int pipe_count)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipe_count)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		i++;
+	}
 }

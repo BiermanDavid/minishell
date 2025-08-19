@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 22:11:21 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:50:04 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ int	execution_manager(t_cmd_list *cmd_list, char ***envp)
 		else
 		{
 			result = execute_single(node, envp);
+			if (result == 130)
+			{
+				g_exit_status = 0;
+				exit(0);
+			}
 			g_exit_status = result;
 			node = node->next;
 		}

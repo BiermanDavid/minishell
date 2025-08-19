@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/06 18:40:54 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:59:47 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,21 +71,19 @@ pid_t		spawn_stage(t_cmd_node *node, int fds[2],
 t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp);
 int			count_pipeline_commands(t_cmd_node *start);
 void		setup_pipes(int (*pipes)[2], int pipe_count);
-pid_t		exec_first_cmd(t_cmd_node *node, int (*pipes)[2], char ***envp);
+pid_t		exec_first_cmd(t_cmd_node *node, int (*pipes)[2], int pipe_count,
+				char ***envp);
 pid_t		exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i,
 				char ***envp);
 pid_t		exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 				char ***envp);
-void		set_minimal_signals(void);
 t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
 				int cmd_count, int pipe_count, char ***envp);
 void		exec_middle_commands(t_cmd_node *start, pid_t *pids, int pipes[][2],
 				char ***envp);
 void		wait_for_pipeline(pid_t *pids, int cmd_count);
 void		restore_shell_signals(void);
-void		handle_ctrl_c_minimal(int sig);
 void		close_all_pipes(int (*pipes)[2], int pipe_count);
-
 
 /* Wildcard expansion functions */
 char		**expand_wildcards(const char *pattern, int *match_count);

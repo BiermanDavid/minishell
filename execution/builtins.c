@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 21:12:35 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 21:16:59 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 00:48:08 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,13 @@ int	builtin_pwd(void)
 
 /**
  * Implements the exit builtin command functionality.
- * Terminates the shell process with exit code 0.
- * Returns 0 (though this is never reached due to exit).
+ * Returns special exit code to signal shell termination.
+ * Returns 130 to signal exit request (allows cleanup).
  */
 int	builtin_exit(char **args)
 {
 	(void)args;
-	exit(0);
-	return (0);
+	return (130);
 }
 
 /**
