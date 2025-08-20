@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 21:12:35 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:48:08 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 04:18:13 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,38 @@ int	builtin_pwd(void)
 	return (0);
 }
 
-/**
- * Implements the exit builtin command functionality.
- * Returns special exit code to signal shell termination.
- * Returns 130 to signal exit request (allows cleanup).
- */
+static int	is_valid_number(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	if (!str[i])
+		return (0);
+	while (str[i])
+		if (!ft_isdigit(str[i++]))
+			return (0);
+	return (1);
+}
+
 int	builtin_exit(char **args)
 {
-	(void)args;
-	return (130);
+	extern int	g_exit_status;
+
+	if (!args[1])
+		return (g_exit_status = 0, 130);
+	if (args[2])
+		return (write(2, "minishell: exit: too many arguments\n", 37),
+			g_exit_status = 1, 1);
+	if (!is_valid_number(args[1]))
+	{
+		write(2, "minishell: exit: ", 17);
+		write(2, args[1], ft_strlen(args[1]));
+		write(2, ": numeric argument required\n", 28);
+		return (g_exit_status = 255, 130);
+	}
+	return (g_exit_status = (unsigned char)ft_atoi(args[1]), 130);
 }
 
 /**

@@ -69,6 +69,7 @@ static int	handle_export_argument(char *arg, char ***envp)
 int	builtin_export(char **args, char ***envp)
 {
 	int	i;
+	int	error;
 
 	if (!args[1])
 	{
@@ -76,12 +77,14 @@ int	builtin_export(char **args, char ***envp)
 		return (0);
 	}
 	i = 1;
+	error = 0;
 	while (args[i])
 	{
-		handle_export_argument(args[i], envp);
+		if (handle_export_argument(args[i], envp))
+			error = 1;
 		i++;
 	}
-	return (0);
+	return (error);
 }
 
 /**
@@ -91,15 +94,27 @@ int	builtin_export(char **args, char ***envp)
  */
 int	builtin_unset(char **args, char ***envp)
 {
-	int	i;
+	int			i;
+	int			error;
+	extern int	g_exit_status;
 
 	i = 1;
+	error = 0;
 	while (args[i])
 	{
-		env_unset(envp, args[i]);
+		if (!is_valid_identifier(args[i]))
+		{
+			write(STDERR_FILENO, "minishell: unset: `", 19);
+			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
+			write(STDERR_FILENO, "': not a valid identifier\n", 26);
+			g_exit_status = 1;
+			error = 1;
+		}
+		else
+			env_unset(envp, args[i]);
 		i++;
 	}
-	return (0);
+	return (error);
 }
 
 /**
