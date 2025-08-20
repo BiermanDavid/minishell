@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:58:18 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/18 18:05:11 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:29:18 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ static void	free_cmd_args(char **cmd)
 }
 
 /**
- * Frees a command list and all its nodes.
- * Cleans up all allocated memory.
+ * Frees a command list and all its nodes
+ * Cleans up all allocated memory
  */
 void	free_cmd_list(t_cmd_list *list)
 {
@@ -77,7 +77,8 @@ void	free_cmd_list(t_cmd_list *list)
 }
 
 /**
- * Skips whitespace wrapper function.
+ * Skips whitespace wrapper function,
+ * part of token handling but doesnt fit anywhere else because norm func limit.
  */
 
 void	skip_whitespace(const char *input, int *pos)

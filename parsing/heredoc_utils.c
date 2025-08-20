@@ -6,15 +6,15 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 13:52:42 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 23:46:32 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:47:23 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
 /**
- * Reads one line of heredoc input.
- * Returns processed line without trailing newline.
+ * Reads one line of heredoc input
+ * Returns processed line without trailing newline
  */
 char	*read_heredoc(char *buffer, size_t buffer_size)
 {
@@ -40,8 +40,8 @@ char	*read_heredoc(char *buffer, size_t buffer_size)
 }
 
 /**
- * Reallocates heredoc buffer to accommodate more data.
- * Returns new buffer or NULL on failure.
+ * Reallocates heredoc buffer to accommodate more data
+ * Returns new buffer or NULL on failure
  */
 char	*realloc_heredoc_buffer(char *data, size_t *size,
 	size_t needed_size, size_t current_len)
@@ -67,6 +67,9 @@ char	*realloc_heredoc_buffer(char *data, size_t *size,
 /**
  * Initializes heredoc collection buffer.
  * Sets up initial data buffer and tracking variables.
+ * arbitrary buffer size based on power of 1kb. 
+ * can dynamically allocate but cant find an edge case applicable
+ * and whow wants to make 3 functions just to do that?
  */
 char	*init_heredoc_buffer(size_t *size, size_t *len)
 {

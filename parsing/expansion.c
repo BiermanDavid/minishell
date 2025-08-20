@@ -6,15 +6,15 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 01:19:19 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:29:46 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
 /**
- * Processes a variable expansion in the input.
- * Handles $VAR expansion and updates positions.
+ * Processes a variable expansion in the input
+ * Handles $VAR expansion
  */
 static int	process_variable(const char *input, int input_pos,
 	t_exp_data *data, char **envp)

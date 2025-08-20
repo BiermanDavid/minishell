@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:45:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/17 20:48:27 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:52:02 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ static char	**allocate_matches_array(DIR *dir)
 /**
  * Expands wildcard patterns to matching filenames in current directory.
  * Returns array of matches and sets match_count, or NULL if no matches.
+ * arbitrary buffer size because im not making edge cases for if
+ * there are more than 50 wilcards in each prompt?
  */
 char	**expand_wildcards(const char *pattern, int *match_count)
 {

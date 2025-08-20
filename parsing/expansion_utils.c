@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 21:17:25 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/18 17:51:08 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:45:57 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	process_special_variable(const char *input, int input_pos,
 }
 
 /**
- * Processes escape sequences in variable expansion.
+ * Processes escape sequences in variable expansion
  * Handles \$ and \\ escape sequences.
  */
 int	process_escape_sequence(const char *input, int input_pos,

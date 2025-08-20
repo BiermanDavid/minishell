@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 01:58:55 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:41:10 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void	cleanup_tokens(t_token **tokens, int token_count)
 /**
  * Final step after parsing, push full parsed content to Execution manager
  * Then free the left over memory. 130 is signal code for executing
- * the command exit.
+ * the command exit. we only have this so we can avoid a valgrind issue
  */
 static int	process_command_list(t_cmd_list *cmd_list, char ***envp)
 {

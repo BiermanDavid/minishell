@@ -6,15 +6,14 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 04:44:07 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:40:19 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parse.h"
 
 /**
- * Counts WORD tokens until hitting an operator or EOF.
- * Used to determine command argument count.
+ * Counts WORD tokens until hitting an operator or EOF
  */
 static int	count_words_until_operator(t_token **tokens, int start,
 			int token_count)
@@ -49,8 +48,8 @@ static void	set_command_type(t_cmd_node *cmd, t_token **tokens, int i,
 }
 
 /**
- * Skips separator tokens in token array.
- * Returns updated index after skipping separators.
+ * Skips separator tokens in token array and gives new pos
+ * separater is semicolon or ampersand
  */
 static int	skip_separators(t_token **tokens, int i, int token_count)
 {
@@ -61,8 +60,7 @@ static int	skip_separators(t_token **tokens, int i, int token_count)
 }
 
 /**
- * Processes a single command from tokens.
- * Creates command node and parses arguments and redirections.
+ * find the first command, then process every node until you reach the next cmd
  */
 static int	process_single_command(t_token_data *data, int i,
 	t_cmd_list *cmd_list, char **env)
@@ -92,8 +90,13 @@ static int	process_single_command(t_token_data *data, int i,
 }
 
 /**
- * Main parser creates pipe chains for execution
- * CMD_PIPE means "pipes to next command", CMD_PIPE_END means "last in chain".
+ * Main parser manager.
+ * we check for syntax edge cases for missing commands after pipes and stuff
+ * then we skip any & symbols in a loop.
+ * in the loop we basicaly create the cmd list for operations like LS or cat. 
+ * Then we make nodes for each argument like heloo when you do echo hello. 
+ * This runs until you reach the next cmd like ls or cat, and then the process
+ * repeats until EOF.
  */
 t_cmd_list	*parse_command(t_token **tokens, int token_count, char **env)
 {
