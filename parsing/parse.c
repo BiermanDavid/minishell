@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:05 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 03:24:08 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 04:44:07 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
  * Counts WORD tokens until hitting an operator or EOF.
  * Used to determine command argument count.
  */
-static int	count_words_until_operator(t_token **tokens, int start, int token_count)
+static int	count_words_until_operator(t_token **tokens, int start,
+			int token_count)
 {
 	int	count;
 	int	i;

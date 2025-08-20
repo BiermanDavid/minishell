@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 04:28:40 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 04:45:09 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,12 @@ void	destroy_token(t_token *token);
  */
 char	**expand_wildcards(const char *pattern, int *match_count);
 
- /**
-  * wildcard_utils.c -
-  */
+/**
+ * wildcard_utils.c -
+ */
 int		wildcard_match(const char *pattern, const char *str);
 char	**create_match_array(char **matches, int count);
-char	**resize_matches(char **old_matches, int old_capacity, int new_capacity);
+char	**resize_matches(char **old_matches, int old_capacity,
+			int new_capacity);
 
 #endif
