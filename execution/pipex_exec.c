@@ -6,15 +6,20 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 21:47:26 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:56:40 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 06:01:49 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Executes all middle commands in pipeline.
- * Handles commands between first and last.
+ * Executes all middle commands in pipeline with dual pipe redirection.
+ * Iterates through pipeline, forking processes for commands between
+ * first and last, with stdin from previous pipe and stdout to next pipe.
+ * @param start First command node in pipeline sequence
+ * @param pids Array to store process IDs for each command
+ * @param pipes Array of pipe file descriptor pairs
+ * @param envp Pointer to environment variables array (modifiable)
  */
 void	exec_middle_commands(t_cmd_node *start, pid_t *pids, int pipes[][2],
 			char ***envp)
@@ -43,8 +48,14 @@ void	exec_middle_commands(t_cmd_node *start, pid_t *pids, int pipes[][2],
 }
 
 /**
- * Executes middle command in pipeline.
- * Reads from previous pipe, writes to next pipe.
+ * Executes single middle command with dual pipe redirection.
+ * Forks process, redirects stdin from previous pipe and stdout to next pipe,
+ * applies command redirections, then executes builtin or external command.
+ * @param node Command node to execute
+ * @param pipes Array of pipe file descriptor pairs
+ * @param i Command index in pipeline (determines pipe connections)
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Process ID of forked child process
  */
 pid_t	exec_middle_cmd(t_cmd_node *node, int pipes[][2], int i, char ***envp)
 {

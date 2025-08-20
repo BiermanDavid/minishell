@@ -6,17 +6,23 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 20:46:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 22:11:29 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 06:25:53 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 #include "parse.h"
 
-// WILDCARD FILE
 /**
- * Rebuilds command array by replacing one argument with multiple arguments.
- * Used when wildcard expansion produces multiple matches.
+ * Reconstructs command argument array with expanded wildcard replacements.
+ * Dynamically reallocates memory to accommodate multiple file matches from
+ * single wildcard pattern, preserving argument order and command structure.
+ * Essential for proper shell glob expansion during command execution.
+ * @param old_cmd Original command array to modify
+ * @param index Position of argument to replace with expansions
+ * @param replacements Array of expanded filenames from wildcard matching
+ * @param replacement_count Number of replacement strings to insert
+ * @return Newly allocated command array with expansions, NULL on failure
  */
 static char	**rebuild_cmd_array(char **old_cmd, int index,
 		char **replacements, int replacement_count)
@@ -47,8 +53,14 @@ static char	**rebuild_cmd_array(char **old_cmd, int index,
 }
 
 /**
- * Processes wildcard expansion for a single argument.
- * Returns new command array if expansion occurred, NULL otherwise.
+ * Attempts wildcard expansion on specified command argument.
+ * Searches filesystem for pattern matches and rebuilds command array
+ * if expansions found. Handles memory management for both successful
+ * and failed expansion attempts to prevent leaks during glob processing.
+ * @param node Command node containing argument array to expand
+ * @param i Index of argument to attempt wildcard expansion on
+ * @param arg_to_expand String containing potential wildcard patterns
+ * @return New command array if expansion succeeded, NULL if no matches
  */
 static char	**process_wildcard_expansion(t_cmd_node *node, int i,
 		char *arg_to_expand)
@@ -74,8 +86,15 @@ static char	**process_wildcard_expansion(t_cmd_node *node, int i,
 }
 
 /**
- * Processes a single argument expansion with variable substitution.
- * Returns 1 if wildcards expanded (exit early), 0 to continue.
+ * Handles argument expansion after environment variable substitution.
+ * Attempts wildcard expansion on already-substituted argument string,
+ * then updates command node with either expanded array or single substituted 
+ * value. Returns early termination flag to prevent 
+ * further processing on successful expansion.
+ * @param node Command node to modify with expanded arguments
+ * @param i Index of argument being processed in command array
+ * @param expanded Pre-substituted argument string to potentially expand
+ * @return 1 if wildcard expansion occurred (stop processing), 0 to continue
  */
 static int	process_expanded_argument(t_cmd_node *node, int i, char *expanded)
 {
@@ -94,8 +113,13 @@ static int	process_expanded_argument(t_cmd_node *node, int i, char *expanded)
 }
 
 /**
- * Processes a single argument expansion without variable substitution.
- * Returns 1 if wildcards expanded (exit early), 0 to continue.
+ * Attempts wildcard expansion on unmodified command argument.
+ * Directly processes original argument string for glob patterns without
+ * prior variable substitution, updating command array if matches found.
+ * Used when no environment variables detected in argument string.
+ * @param node Command node containing argument array to potentially expand
+ * @param i Index of argument to check for wildcard expansion
+ * @return 1 if wildcard expansion occurred (stop processing), 0 to continue
  */
 static int	process_direct_argument(t_cmd_node *node, int i)
 {
@@ -111,8 +135,13 @@ static int	process_direct_argument(t_cmd_node *node, int i)
 }
 
 /**
- * Expands variables and wildcards in command arguments during execution.
- * Modifies the command node's argument array in place.
+ * Performs complete argument expansion pipeline for command execution.
+ * Sequentially processes each command argument for environment variable
+ * substitution followed by wildcard expansion, modifying command node
+ * structure in-place. Terminates early if wildcard expansion reconstructs
+ * argument array to prevent index invalidation during iteration.
+ * @param node Command node with argument array requiring expansion
+ * @param envp Environment variables array for substitution context
  */
 void	expand_command_args(t_cmd_node *node, char **envp)
 {

@@ -6,15 +6,21 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 15:33:17 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 00:56:09 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 06:02:39 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Executes first command in pipeline.
- * Writes output to pipe, reads from stdin.
+ * Executes first command in pipeline with proper pipe redirection.
+ * Forks process, redirects stdout to pipe, maintains stdin,
+ * applies redirections, then executes command.
+ * @param node Command node to execute
+ * @param pipes Array of pipe file descriptor pairs
+ * @param pipe_count Total number of pipes in pipeline
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Process ID of forked child process
  */
 pid_t	exec_first_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 			char ***envp)
@@ -44,8 +50,14 @@ pid_t	exec_first_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 }
 
 /**
- * Executes last command in pipeline.
- * Reads from pipe, writes to stdout.
+ * Executes last command in pipeline with pipe input redirection.
+ * Forks process, redirects stdin from final pipe, maintains stdout,
+ * applies redirections, then executes builtin or external command.
+ * @param node Command node to execute
+ * @param pipes Array of pipe file descriptor pairs
+ * @param pipe_count Total number of pipes in pipeline
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Process ID of forked child process
  */
 pid_t	exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 		char ***envp)
@@ -75,8 +87,11 @@ pid_t	exec_last_cmd(t_cmd_node *node, int pipes[][2], int pipe_count,
 }
 
 /**
- * Waits for all pipeline processes to complete.
- * Sets global exit status from last command.
+ * Waits for all pipeline processes and manages exit status.
+ * Sequentially waits for each child process completion, sets global
+ * exit status from last command's result for proper shell behavior.
+ * @param pids Array of process IDs for all pipeline commands
+ * @param cmd_count Total number of commands in pipeline
  */
 void	wait_for_pipeline(pid_t *pids, int cmd_count)
 {
@@ -99,8 +114,13 @@ void	wait_for_pipeline(pid_t *pids, int cmd_count)
 }
 
 /**
- * Sets up and executes all pipeline processes.
- * Handles first, middle, and last command execution.
+ * Orchestrates pipeline process creation and execution sequence.
+ * Executes first command, all middle commands, then last command
+ * with proper pipe connections and process management.
+ * @param start First command node in pipeline sequence
+ * @param pids Array to store process IDs for each command
+ * @param pipes Array of pipe file descriptor pairs
+ * @param envp Pointer to environment variables array (modifiable)
  */
 static void	setup_pipeline_processes(t_cmd_node *start, pid_t *pids,
 	int pipes[][2], char ***envp)
@@ -118,8 +138,13 @@ static void	setup_pipeline_processes(t_cmd_node *start, pid_t *pids,
 }
 
 /**
- * Helper function to execute pipeline processes.
- * Splits exec_pipeline to comply with Norm variable limit.
+ * Executes pipeline processes with memory management and cleanup.
+ * Allocates process arrays, sets up pipes, executes all pipeline processes,
+ * and handles cleanup. Norm-compliant helper for exec_pipeline.
+ * @param start First command node in pipeline sequence
+ * @param cmd_count Total number of commands in pipeline
+ * @param pipe_count Number of pipes needed (cmd_count - 1)
+ * @param envp Pointer to environment variables array (modifiable)
  */
 t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
 		int cmd_count, int pipe_count, char ***envp)
@@ -128,8 +153,6 @@ t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
 	pid_t		*pids;
 	int			(*pipes)[2];
 
-	if (cmd_count > 1000)
-		return (start->next);
 	pids = malloc(cmd_count * sizeof(pid_t));
 	pipes = malloc(pipe_count * sizeof(int [2]));
 	if (!pids || !pipes)

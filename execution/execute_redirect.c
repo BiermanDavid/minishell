@@ -14,9 +14,12 @@
 #include "parse.h"
 
 /**
- * Handles input redirection (<).
- * Opens file for reading and redirects to stdin.
- * Returns 0 on success, -1 on failure.
+ * Establishes input redirection from file to standard input stream.
+ * Opens specified file in read-only mode and duplicates file descriptor
+ * to stdin, enabling command to read from file instead of terminal input.
+ * Essential for shell input redirection operator implementation.
+ * @param f File node containing target filename for input source
+ * @return 0 on successful redirection setup, -1 on file access failure
  */
 int	redir_in(t_file_node *f)
 {
@@ -34,9 +37,12 @@ int	redir_in(t_file_node *f)
 }
 
 /**
- * Handles output redirection (>).
- * Opens file for writing (truncates) and redirects to stdout.
- * Returns 0 on success, -1 on failure.
+ * Establishes output redirection from standard output to file.
+ * Creates or truncates target file and duplicates file descriptor to stdout,
+ * directing all command output to file instead of terminal display.
+ * Implements shell output redirection with file creation and truncation.
+ * @param f File node containing target filename for output destination
+ * @return 0 on successful redirection setup, -1 on file creation failure
  */
 int	redir_out(t_file_node *f)
 {
@@ -54,9 +60,12 @@ int	redir_out(t_file_node *f)
 }
 
 /**
- * Handles append redirection (>>).
- * Opens file for appending and redirects to stdout.
- * Returns 0 on success, -1 on failure.
+ * Establishes append redirection from standard output to file end.
+ * Opens target file in append mode, preserving existing content while
+ * redirecting stdout to file end for cumulative output operations.
+ * Implements shell append redirection without data loss from truncation.
+ * @param f File node containing target filename for append destination
+ * @return 0 on successful redirection setup, -1 on file access failure
  */
 int	redir_append(t_file_node *f)
 {
@@ -74,9 +83,12 @@ int	redir_append(t_file_node *f)
 }
 
 /**
- * Handles heredoc redirection (<<).
- * Creates pipe with heredoc content and redirects to stdin.
- * Returns 0 on success, -1 on failure.
+ * Implements here document redirection using inter-process pipe communication.
+ * Creates pipe pair, writes collected heredoc content to write end, then
+ * redirects read end to stdin for command input. Enables inline text
+ * input without temporary files during shell here document processing.
+ * @param f File node containing heredoc delimiter for content collection
+ * @return 0 on successful pipe redirection, -1 on pipe creation failure
  */
 int	redir_heredoc(t_file_node *f)
 {
@@ -98,8 +110,13 @@ int	redir_heredoc(t_file_node *f)
 }
 
 /**
- * Applies all redirections for a command with variable expansion.
- * Returns 0 on success, -1 on failure.
+ * Processes complete redirection sequence for command execution.
+ * Iterates through redirection list, expands filenames with environment
+ * variables, executes each redirection operation, then restores original
+ * filenames. Ensures proper file descriptor setup before command execution.
+ * @param files Linked list of redirection operations to apply
+ * @param envp Environment variables array for filename expansion
+ * @return 0 on successful redirection application, -1 on any operation failure
  */
 int	apply_redirections(t_file_list *files, char **envp)
 {

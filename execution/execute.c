@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 01:41:40 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:27:13 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,12 @@
 int	g_exit_status = 0;
 
 /**
- * Executes a single command node with proper expansion and redirection.
- * Processing order:
- * 1. Validates node has command
- * 2. Expands wildcards and variables in arguments
- * 3. Checks for standalone variable assignment (VAR=value)
- * 4. Executes builtin commands with redirection support
- * 5. Executes external commands via PATH lookup
- * Returns command exit status (0 = success, non-zero = error).
+ * Executes single command with expansion, assignments, and redirections.
+ * Validates input, expands variables/wildcards, handles assignments,
+ * then routes to builtin or external command execution.
+ * @param node Command node with command array and redirection list
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Command exit status (0=success, 1-255=errors, 127=not found)
  */
 int	execute_single(t_cmd_node *node, char ***envp)
 {
@@ -40,8 +38,17 @@ int	execute_single(t_cmd_node *node, char ***envp)
 }
 
 /**
- * Main execution manager that processes command list sequentially.
- * Handles pipelines and regular commands with proper exit status tracking.
+ * Core execution that processes parsed command list 
+ * and manages shell exit status.
+ * Iterates through command nodes, detecting pipeline vs single commands.
+ * For pipelines, delegates to exec_pipeline() which returns next non-pipeline
+ * node. For single commands, executes via execute_single() 
+ * and updates global exit status. Handles SIGINT (Ctrl+C) 
+ * by returning -130 to signal interruption.
+ * @param cmd_list Parsed command list containing command nodes to execute
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Global exit status of last executed command, -130 on interruption,
+ * -1 on invalid input
  */
 int	execution_manager(t_cmd_list *cmd_list, char ***envp)
 {
