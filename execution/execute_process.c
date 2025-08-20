@@ -6,7 +6,7 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 10:00:00 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:26:38 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:29:16 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,13 @@ static int	is_shell_operator(const char *cmd)
 }
 
 /**
- * Executes a command by checking absolute path or searching PATH.
- * Called from child process during external command execution.
+ * Resolves and executes command using absolute path or PATH search.
+ * 
+ * Detects absolute/relative paths via '/' character, executes directly
+ * or searches PATH directories for executable. Child process only.
+ * 
+ * @param node Command node containing command array to execute
+ * @param env Environment variables array for execution context
  */
 void	exec_command(t_cmd_node *node, char **env)
 {
@@ -45,9 +50,12 @@ void	exec_command(t_cmd_node *node, char **env)
 }
 
 /**
- * Executes an external command in a child process.
- * Handles forking, signal setup, and redirection.
- * Returns the exit status of the child process.
+ * Executes external command in child process with signals and redirections.
+ * Forks, sets up child signals, applies redirections, then executes command.
+ * Parent waits for child and returns exit status.
+ * @param node Command node with command array and redirection list
+ * @param env Environment variables array for execution
+ * @return Child process exit status (0=success, 1-255=errors, 127=not found)
  */
 int	exec_external(t_cmd_node *node, char **env)
 {

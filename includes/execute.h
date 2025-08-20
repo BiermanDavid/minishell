@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:41 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 04:43:34 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 06:25:20 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,9 +142,9 @@ t_cmd_node	*execute_pipeline_processes(t_cmd_node *start,
  * redirect_utils.c
  */
 char		*prepare_redirection_filename(t_file_node *f, char **envp,
-char		**original_filename);
+				char **original_filename);
 void		restore_filename(t_file_node *f, char *expanded_filename,
-char		*original_filename);
+				char *original_filename);
 int			execute_redirection(t_file_node *f);
 
 #endif

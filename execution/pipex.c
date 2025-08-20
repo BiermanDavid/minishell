@@ -6,15 +6,17 @@
 /*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 19:51:40 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/19 22:58:07 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 05:53:40 by dgessner         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "execute.h"
 
 /**
- * Counts the number of commands in a pipeline.
- * Returns total command count including the final non-pipe command.
+ * Counts commands in pipeline sequence including final non-pipe command.
+ * Iterates through linked list until non-pipe command found.
+ * @param start First command node in pipeline sequence
+ * @return Total command count in pipeline (minimum 1)
  */
 int	count_pipeline_commands(t_cmd_node *start)
 {
@@ -33,8 +35,10 @@ int	count_pipeline_commands(t_cmd_node *start)
 }
 
 /**
- * Creates all pipe file descriptors for the pipeline.
- * Sets up read and write ends for inter-process communication.
+ * Creates pipe file descriptors for inter-process communication.
+ * Allocates read/write pipe pairs for each command connection in pipeline. 
+ * @param pipes Array to store pipe file descriptor pairs
+ * @param pipe_count Number of pipes to create (cmd_count - 1)
  */
 void	setup_pipes(int (*pipes)[2], int pipe_count)
 {
@@ -49,9 +53,12 @@ void	setup_pipes(int (*pipes)[2], int pipe_count)
 }
 
 /**
- * Executes a complete pipeline of commands.
- * Manages signal handling and delegates to process execution.
- * Returns pointer to next command node after pipeline.
+ * Executes pipeline of commands with inter-process pipes and signals.
+ * Sets up pipes, manages signal handling, delegates to process execution,
+ * then returns next non-pipeline command node.
+ * @param start First command node in pipeline sequence
+ * @param envp Pointer to environment variables array (modifiable)
+ * @return Pointer to next command node after pipeline ends
  */
 t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 {
@@ -68,8 +75,11 @@ t_cmd_node	*exec_pipeline(t_cmd_node *start, char ***envp)
 }
 
 /**
- * Closes all pipe file descriptors in parent process.
- * Essential for proper pipeline termination.
+ * Closes all pipe file descriptors in parent process for cleanup.
+ * Prevents hanging pipes by closing unused file descriptors,
+ * essential for proper pipeline termination and EOF signaling.
+ * @param pipes Array of pipe file descriptor pairs
+ * @param pipe_count Number of pipes to close
  */
 void	close_all_pipes(int pipes[][2], int pipe_count)
 {
