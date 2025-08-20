@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 03:25:07 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 04:28:40 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,5 +139,17 @@ void	*safe_malloc(size_t size);
 char	*safe_strdup(const char *s);
 void	*safe_realloc(void *ptr, size_t old_size, size_t new_size);
 void	destroy_token(t_token *token);
+
+/**
+ * wildcard_expansion.c - 
+ */
+char	**expand_wildcards(const char *pattern, int *match_count);
+
+ /**
+  * wildcard_utils.c -
+  */
+int		wildcard_match(const char *pattern, const char *str);
+char	**create_match_array(char **matches, int count);
+char	**resize_matches(char **old_matches, int old_capacity, int new_capacity);
 
 #endif
