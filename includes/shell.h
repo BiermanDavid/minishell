@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:33:58 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 00:54:08 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 01:47:14 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	ignore_backslash(int sig);
 /**
  * handle_inputs.c - manages response for input edge cases
  */
-void	process_input(char *input, char ***envp);
+int		process_input(char *input, char ***envp);
 char	*read_input(void);
 bool	is_empty_line(const char *input);
 

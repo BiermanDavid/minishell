@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dgessner <dgessner@student.42heilbronn.de> +#+  +:+       +#+        */
+/*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 20:24:05 by dgessner          #+#    #+#             */
-/*   Updated: 2025/08/20 00:50:04 by dgessner         ###   ########.fr       */
+/*   Updated: 2025/08/20 01:41:40 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,17 +54,12 @@ int	execution_manager(t_cmd_list *cmd_list, char ***envp)
 	while (node)
 	{
 		if (node->cmd_type == CMD_PIPE)
-		{
 			node = exec_pipeline(node, envp);
-		}
 		else
 		{
 			result = execute_single(node, envp);
 			if (result == 130)
-			{
-				g_exit_status = 0;
-				exit(0);
-			}
+				return (-130);
 			g_exit_status = result;
 			node = node->next;
 		}

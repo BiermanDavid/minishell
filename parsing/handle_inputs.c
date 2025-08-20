@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:30:01 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 22:52:10 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 01:58:55 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,28 @@ static void	cleanup_tokens(t_token **tokens, int token_count)
 
 /**
  * Final step after parsing, push full parsed content to Execution manager
- * Then free the left over memory.
+ * Then free the left over memory. 130 is signal code for executing
+ * the command exit.
  */
-static void	process_command_list(t_cmd_list *cmd_list, char ***envp)
+static int	process_command_list(t_cmd_list *cmd_list, char ***envp)
 {
-	if (cmd_list && cmd_list->size > 0)
+	int	result;
+
+	result = 0;
+	if (cmd_list)
 	{
-		execution_manager(cmd_list, envp);
+		if (cmd_list->size > 0)
+		{
+			result = execution_manager(cmd_list, envp);
+			if (result == -130)
+			{
+				free_cmd_list(cmd_list);
+				return (-130);
+			}
+		}
 		free_cmd_list(cmd_list);
 	}
+	return (result);
 }
 
 /**
@@ -52,19 +65,22 @@ static void	process_command_list(t_cmd_list *cmd_list, char ***envp)
  * ls token -la token PIPE grep.
  * then we make nodes in the comand list to get beans as an executable for grep
  */
-void	process_input(char *input, char ***envp)
+int	process_input(char *input, char ***envp)
 {
 	t_token		**tokens;
 	int			token_count;
 	t_cmd_list	*cmd_list;
+	int			result;
 
 	tokens = tokenize_input(input, &token_count);
 	if (tokens && token_count > 0)
 	{
 		cmd_list = parse_command(tokens, token_count, *envp);
-		process_command_list(cmd_list, envp);
+		result = process_command_list(cmd_list, envp);
 		cleanup_tokens(tokens, token_count);
+		return (result);
 	}
+	return (0);
 }
 
 /**

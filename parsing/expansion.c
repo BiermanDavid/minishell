@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:41:24 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/20 00:48:10 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 01:19:19 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ char	*expand_variables(const char *input, char **envp)
 	result[result_pos] = '\0';
 	return (result);
 }
+
 /**
  * Determines quote type and processes accordingly.
  * Routes to appropriate quote handler based on content type.

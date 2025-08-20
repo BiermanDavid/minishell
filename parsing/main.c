@@ -6,7 +6,7 @@
 /*   By: dabierma <dabierma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:29:55 by dabierma          #+#    #+#             */
-/*   Updated: 2025/08/19 22:51:58 by dabierma         ###   ########.fr       */
+/*   Updated: 2025/08/20 01:46:00 by dabierma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
 	char	**new_envp;
+	int		result;
 
 	(void)argc;
 	(void)argv;
@@ -60,8 +61,10 @@ int	main(int argc, char **argv, char **envp)
 			free(input);
 			continue ;
 		}
-		process_input(input, &new_envp);
+		result = process_input(input, &new_envp);
 		free(input);
+		if (result == -130)
+			break ;
 	}
 	free_env(new_envp);
 	return (g_exit_status);
